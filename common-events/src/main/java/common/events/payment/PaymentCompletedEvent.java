@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
+@Builder
 public record PaymentCompletedEvent(
 
         @NotBlank UUID eventId,

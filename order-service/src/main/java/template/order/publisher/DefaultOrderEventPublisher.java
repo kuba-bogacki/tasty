@@ -14,7 +14,7 @@ import java.util.UUID;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class DefaultEventOrderPublisher implements OrderEventPublisher {
+public class DefaultOrderEventPublisher implements OrderEventPublisher {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
@@ -30,5 +30,6 @@ public class DefaultEventOrderPublisher implements OrderEventPublisher {
                 .build();
 
         kafkaTemplate.send(Topics.ORDER_CREATED, order.getId().toString(), event);
+        log.info("Event 'create order' with id: {} successfully published.", event.eventId());
     }
 }

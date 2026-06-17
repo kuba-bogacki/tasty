@@ -33,12 +33,13 @@ public class DefaultOrderService implements OrderService {
                 .restaurantId(UUID.fromString(orderDto.restaurantId()))
                 .totalAmount(getTotalAmount(orderDto.items()))
                 .deliveryAddress(getDeliveryAddress(orderDto.deliveryAddress()))
-                .items(getOrderItemList(orderDto.items()))
                 .status(OrderStatus.CREATED)
                 .createdAt(Instant.now())
                 .build();
+        order.addItems(getOrderItemList(orderDto.items()));
 
         final Order savedOrder = orderRepository.save(order);
+        log.info("New order with id {} successfully saved.", savedOrder.getId());
         orderEventPublisher.publishOrderCreated(savedOrder);
     }
 

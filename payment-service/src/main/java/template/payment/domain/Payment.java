@@ -1,7 +1,7 @@
 package template.payment.domain;
 
-import lombok.Builder;
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.*;
 import lombok.extern.jackson.Jacksonized;
 import template.payment.domain.type.PaymentMethod;
 import template.payment.domain.type.PaymentStatus;
@@ -10,15 +10,30 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
-@Data
+@Entity
+@Getter
+@Setter
 @Builder
-@Jacksonized
+@AllArgsConstructor
+@NoArgsConstructor
 public class Payment {
 
-    private final UUID id;
-    private final UUID orderId;
-    private final BigDecimal amount;
-    private final PaymentStatus status;
-    private final PaymentMethod method;
-    private final Instant createdAt;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @Column(nullable = false)
+    private UUID orderId;
+
+    @Column(nullable = false)
+    private BigDecimal amount;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod method;
+
+    @Column(nullable = false)
+    private Instant createdAt;
 }

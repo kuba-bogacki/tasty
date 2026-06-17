@@ -1,22 +1,41 @@
 package template.courier.domain;
 
-import lombok.Builder;
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.*;
 import lombok.extern.jackson.Jacksonized;
+import template.courier.domain.type.CourierStatus;
 import template.courier.domain.type.DeliveryStatus;
 
 import java.time.Instant;
 import java.util.UUID;
 
-@Data
+@Entity
+@Getter
+@Setter
 @Builder
-@Jacksonized
+@AllArgsConstructor
+@NoArgsConstructor
 public class Courier {
 
-    private final UUID id;
-    private final UUID orderId;
-    private final UUID courierId;
-    private final DeliveryStatus status;
-    private final Instant assignedAt;
-    private final Instant deliveredAt;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @Column(nullable = false)
+    private UUID orderId;
+
+    @Column(nullable = false)
+    private UUID courierId;
+
+    @Enumerated(EnumType.STRING)
+    private CourierStatus courierStatus;
+
+    @Enumerated(EnumType.STRING)
+    private DeliveryStatus deliveryStatus;
+
+    @Column(nullable = false)
+    private Instant assignedAt;
+
+    @Column(nullable = false)
+    private Instant deliveredAt;
 }

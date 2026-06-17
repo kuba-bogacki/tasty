@@ -1,22 +1,37 @@
 package template.restaurant.domain;
 
-import lombok.Builder;
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.*;
 import lombok.extern.jackson.Jacksonized;
 import template.restaurant.domain.type.RestaurantStatus;
 
 import java.time.Instant;
 import java.util.UUID;
 
-@Data
+@Entity
+@Getter
+@Setter
 @Builder
-@Jacksonized
+@AllArgsConstructor
+@NoArgsConstructor
 public class Restaurant {
 
-    private final UUID id;
-    private final String name;
-    private final String description;
-    private final RestaurantStatus status;
-    private final String phoneNumber;
-    private final Instant createdAt;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private String description;
+
+    @Enumerated(EnumType.STRING)
+    private RestaurantStatus status;
+
+    @Column(nullable = false)
+    private String phoneNumber;
+
+    @Column(nullable = false)
+    private Instant createdAt;
 }
