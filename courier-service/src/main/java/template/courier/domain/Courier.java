@@ -2,9 +2,7 @@ package template.courier.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.extern.jackson.Jacksonized;
 import template.courier.domain.type.CourierStatus;
-import template.courier.domain.type.DeliveryStatus;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -12,7 +10,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class Courier {
@@ -21,21 +19,15 @@ public class Courier {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private UUID orderId;
 
     @Column(nullable = false)
-    private UUID courierId;
+    private String name;
 
     @Enumerated(EnumType.STRING)
-    private CourierStatus courierStatus;
+    private CourierStatus status;
 
-    @Enumerated(EnumType.STRING)
-    private DeliveryStatus deliveryStatus;
-
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Instant assignedAt;
-
-    @Column(nullable = false)
-    private Instant deliveredAt;
 }

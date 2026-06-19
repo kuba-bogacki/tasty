@@ -1,5 +1,6 @@
 package template.notification.service;
 
+import common.events.deliver.CourierAssignedEvent;
 import common.events.payment.PaymentCompletedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ public class DefaultNotificationService implements NotificationService {
     @Override
     public void sendPaymentNotify(PaymentCompletedEvent event) {
         final Notification notification = Notification.builder()
-                .recipientId(UUID.randomUUID())
+                .customerId(event.customerId())
                 .type(NotificationType.PUSH)
                 .content("Payment successfully finalized")
                 .status(NotificationStatus.SENT)
@@ -30,6 +31,20 @@ public class DefaultNotificationService implements NotificationService {
                 .build();
 
         final Notification savedNotification = notificationRepository.save(notification);
-        log.info("Notification '{}' with id: {} successfully saved.", savedNotification.getContent(), savedNotification.getId());
+        log.info("Payment notification '{}' with id: {} successfully saved.", savedNotification.getContent(), savedNotification.getId());
+    }
+
+    @Override
+    public void sendCourierAssigned(CourierAssignedEvent event) {
+        final Notification notification = Notification.builder()
+                .customerId(event.courierId())
+                .type(NotificationType.PUSH)
+                .content("Courier successfully assigned")
+                .status(NotificationStatus.SENT)
+                .createdAt(Instant.now())
+                .build();
+
+        final Notification savedNotification = notificationRepository.save(notification);
+        log.info("Assigned notification '{}' with id: {} successfully saved.", savedNotification.getContent(), savedNotification.getId());
     }
 }

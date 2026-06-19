@@ -26,6 +26,7 @@ public class DefaultPaymentService implements PaymentService {
     public void processPayment(OrderCreatedEvent event) {
         final Payment payment = Payment.builder()
                 .orderId(event.orderId())
+                .customerId(event.customerId())
                 .amount(event.totalAmount())
                 .status(PaymentStatus.COMPLETED)
                 .method(PaymentMethod.CASH)

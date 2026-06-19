@@ -2,7 +2,6 @@ package template.notification.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.extern.jackson.Jacksonized;
 import template.notification.domain.type.NotificationStatus;
 import template.notification.domain.type.NotificationType;
 
@@ -22,7 +21,7 @@ public class Notification {
     private UUID id;
 
     @Column(nullable = false)
-    private UUID recipientId;
+    private UUID customerId;
 
     @Enumerated(EnumType.STRING)
     private NotificationType type;

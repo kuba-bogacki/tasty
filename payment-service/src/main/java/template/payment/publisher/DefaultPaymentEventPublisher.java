@@ -24,7 +24,9 @@ public class DefaultPaymentEventPublisher implements PaymentEventPublisher {
                 .eventId(UUID.randomUUID())
                 .occurredAt(Instant.now())
                 .paymentId(payment.getId())
+                .restaurantId(payment.getRestaurantId())
                 .orderId(payment.getOrderId())
+                .customerId(payment.getCustomerId())
                 .amount(payment.getAmount())
                 .build();
 

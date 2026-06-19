@@ -23,6 +23,8 @@
         <java.version>17</java.version>
         <allure.version>2.35.1</allure.version>
         <allure.maven.plugin.version>2.18.0</allure.maven.plugin.version>
+        <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
+        <org.mapstruct.binding.version>0.2.0</org.mapstruct.binding.version>
     </properties>
 
     <modules>
@@ -67,6 +69,16 @@
                             <path>
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok</artifactId>
+                            </path>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok-mapstruct-binding</artifactId>
+                                <version>${org.mapstruct.binding.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>${org.mapstruct.version}</version>
                             </path>
                         </annotationProcessorPaths>
                     </configuration>

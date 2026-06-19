@@ -11,6 +11,7 @@ public record OrderDto(
         @NotBlank String customerId,
         @NotBlank String restaurantId,
         @NotNull DeliveryAddressDto deliveryAddress,
-        @NotEmpty List<OrderItemDto> items
+        @NotEmpty List<OrderItemDto> items,
+        @NotBlank String paymentMethod
 
 ) {}

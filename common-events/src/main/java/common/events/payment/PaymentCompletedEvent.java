@@ -16,7 +16,9 @@ public record PaymentCompletedEvent(
         @NotBlank UUID eventId,
         @NotBlank Instant occurredAt,
         @NotBlank UUID paymentId,
+        @NotBlank UUID restaurantId,
         @NotBlank UUID orderId,
+        @NotBlank UUID customerId,
         @NotBlank BigDecimal amount
 
 ) implements DomainEvent {}

@@ -1,5 +1,6 @@
 package template.notification.subscriber;
 
+import common.events.deliver.CourierAssignedEvent;
 import common.events.payment.PaymentCompletedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,5 +18,11 @@ public class DefaultNotificationEventSubscriber implements NotificationEventSubs
     public void subscribePaymentCompleted(PaymentCompletedEvent event) {
         log.info("Event 'payment completed' with id: {} successfully subscribed.", event.eventId());
         notificationService.sendPaymentNotify(event);
+    }
+
+    @Override
+    public void subscribeCourierAssigned(CourierAssignedEvent event) {
+        log.info("Event 'courier assigned' with id: {} successfully subscribed.", event.eventId());
+        notificationService.sendCourierAssigned(event);
     }
 }

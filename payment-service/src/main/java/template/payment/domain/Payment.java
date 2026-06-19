@@ -26,6 +26,12 @@ public class Payment {
     private UUID orderId;
 
     @Column(nullable = false)
+    private UUID customerId;
+
+    @Column(nullable = false)
+    private UUID restaurantId;
+
+    @Column(nullable = false)
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)

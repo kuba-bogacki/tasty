@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "management.health.kafka.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable the built-in Spring Kafka health indicator."
+    }
+  ]
+}

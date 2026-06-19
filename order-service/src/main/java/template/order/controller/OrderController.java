@@ -1,5 +1,6 @@
 package template.order.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping(value = "/create")
-    public ResponseEntity<?> createNewOrder(@RequestBody OrderDto orderDto) {
+    public ResponseEntity<?> createNewOrder(@Valid @RequestBody OrderDto orderDto) {
         orderService.createOrder(orderDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
