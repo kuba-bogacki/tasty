@@ -2,6 +2,7 @@ package template.notification.subscriber;
 
 import common.events.deliver.CourierAssignedEvent;
 import common.events.payment.PaymentCompletedEvent;
+import common.events.payment.RefundCompletedEvent;
 import common.events.topic.Topics;
 import org.springframework.kafka.annotation.KafkaListener;
 
@@ -12,4 +13,7 @@ public interface NotificationEventSubscriber {
 
     @KafkaListener(topics = Topics.COURIER_ASSIGNED, groupId = Topics.TEMPLATE_NOTIFICATION_SERVICE)
     void subscribeCourierAssigned(CourierAssignedEvent event);
+
+    @KafkaListener(topics = Topics.REFUND_COMPLETED, groupId = Topics.TEMPLATE_NOTIFICATION_SERVICE)
+    void subscribeRefundCompleted(RefundCompletedEvent event);
 }

@@ -1,6 +1,7 @@
 package template.payment.subscriber;
 
 import common.events.order.OrderCreatedEvent;
+import common.events.order.OrderRejectedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,13 @@ public class DefaultPaymentEventSubscriber implements PaymentEventSubscriber {
 
     @Override
     public void subscribeOrderCreated(OrderCreatedEvent event) {
-        log.info("Event 'create order' with id: {} successfully subscribed.", event.eventId());
+        log.info("Event 'order created' with id: {} successfully subscribed.", event.eventId());
         paymentService.processPayment(event);
+    }
+
+    @Override
+    public void subscribeOrderRejected(OrderRejectedEvent event) {
+        log.info("Event 'order rejected' with id: {} successfully subscribed.", event.eventId());
+        paymentService.processRefund(event);
     }
 }

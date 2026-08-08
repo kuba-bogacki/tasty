@@ -2,10 +2,12 @@ package common.events.payment;
 
 import common.events.DomainEvent;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 
 import java.time.Instant;
 import java.util.UUID;
 
+@Builder
 public record RefundCompletedEvent(
 
         @NotBlank UUID eventId,

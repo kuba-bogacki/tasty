@@ -11,7 +11,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderPreparation {
@@ -29,6 +29,6 @@ public class OrderPreparation {
     @Enumerated(EnumType.STRING)
     private PreparationStatus status;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Instant acceptedAt;
 }

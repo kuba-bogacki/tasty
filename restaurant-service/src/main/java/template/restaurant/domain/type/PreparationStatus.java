@@ -5,11 +5,11 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum PreparationStatus {
 
-    PENDING("Pending"),
     ACCEPTED("Accepted"),
-    PREPARING("Preparing"),
-    READY("Ready"),
-    REJECTED("Rejected");
+    REJECTED("Rejected"),
+    CANCELLED("Cancelled"),
+    IN_PROGRESS("In progress"),
+    READY("Ready");
 
     private final String description;
 }

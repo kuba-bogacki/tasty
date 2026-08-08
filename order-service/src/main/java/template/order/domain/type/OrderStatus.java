@@ -6,15 +6,13 @@ import lombok.AllArgsConstructor;
 public enum OrderStatus {
 
     CREATED("Created"),
-    PAYMENT_PENDING("Payment pending"),
-    PAID("Paid"),
     ACCEPTED("Accepted"),
-    PREPARING("Preparing"),
-    READY_FOR_PICKUP("Ready for pickup"),
     REJECTED("Rejected"),
+    PREPARING("Preparing"),
+    CANCELLED("Cancelled"),
+    READY_FOR_PICKUP("Ready for pickup"),
     IN_DELIVERY("In delivery"),
-    DELIVERED("Delivered"),
-    CANCELLED("Cancelled");
+    DELIVERED("Delivered");
 
     private final String description;
 }

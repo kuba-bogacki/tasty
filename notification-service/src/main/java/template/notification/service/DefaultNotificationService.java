@@ -2,6 +2,7 @@ package template.notification.service;
 
 import common.events.deliver.CourierAssignedEvent;
 import common.events.payment.PaymentCompletedEvent;
+import common.events.payment.RefundCompletedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -46,5 +47,19 @@ public class DefaultNotificationService implements NotificationService {
 
         final Notification savedNotification = notificationRepository.save(notification);
         log.info("Assigned notification '{}' with id: {} successfully saved.", savedNotification.getContent(), savedNotification.getId());
+    }
+
+    @Override
+    public void sendRefundCompleted(RefundCompletedEvent event) {
+        final Notification notification = Notification.builder()
+                .customerId(event.orderId())
+                .type(NotificationType.PUSH)
+                .content("Refund successfully finalized")
+                .status(NotificationStatus.SENT)
+                .createdAt(Instant.now())
+                .build();
+
+        final Notification savedNotification = notificationRepository.save(notification);
+        log.info("Refund notification '{}' with id: {} successfully saved.", savedNotification.getContent(), savedNotification.getId());
     }
 }

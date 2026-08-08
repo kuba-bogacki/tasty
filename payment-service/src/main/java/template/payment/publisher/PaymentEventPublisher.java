@@ -1,8 +1,11 @@
 package template.payment.publisher;
 
 import template.payment.domain.Payment;
+import template.payment.domain.dto.PaymentDto;
 
 public interface PaymentEventPublisher {
 
-    void publishPaymentCompleted(Payment payment);
+    void publishPaymentCompleted(PaymentDto.Completed completedPayment);
+    void publishPaymentFailed(PaymentDto.Failed failedPayment);
+    void publishRefundCompleted(Payment payment);
 }

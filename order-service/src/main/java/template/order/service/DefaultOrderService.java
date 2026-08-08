@@ -1,5 +1,7 @@
 package template.order.service;
 
+import common.events.payment.RefundCompletedEvent;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import template.order.repository.OrderRepository;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -27,20 +30,39 @@ public class DefaultOrderService implements OrderService {
     private final OrderEventPublisher orderEventPublisher;
 
     @Override
-    public void createOrder(OrderDto orderDto) {
+    public void createOrder(OrderDto.Create createDto) {
         final Order order = Order.builder()
-                .customerId(UUID.fromString(orderDto.customerId()))
-                .restaurantId(UUID.fromString(orderDto.restaurantId()))
-                .totalAmount(getTotalAmount(orderDto.items()))
-                .deliveryAddress(getDeliveryAddress(orderDto.deliveryAddress()))
+                .customerId(UUID.fromString(createDto.customerId()))
+                .restaurantId(UUID.fromString(createDto.restaurantId()))
+                .totalAmount(getTotalAmount(createDto.items()))
+                .deliveryAddress(getDeliveryAddress(createDto.deliveryAddress()))
                 .status(OrderStatus.CREATED)
                 .createdAt(Instant.now())
                 .build();
-        order.addItems(getOrderItemList(orderDto.items()));
+        order.addItems(getOrderItemList(createDto.items()));
 
         final Order savedOrder = orderRepository.save(order);
+        final OrderDto.Publish publishedOrder = OrderDto.Publish.builder()
+                .orderId(savedOrder.getId())
+                .customerId(savedOrder.getCustomerId())
+                .restaurantId(savedOrder.getRestaurantId())
+                .paymentMethod(createDto.paymentMethod())
+                .totalAmount(savedOrder.getTotalAmount())
+                .build();
         log.info("New order with id {} successfully saved.", savedOrder.getId());
-        orderEventPublisher.publishOrderCreated(savedOrder);
+        orderEventPublisher.publishOrderCreated(publishedOrder);
+    }
+
+    @Override
+    public void processCancel(RefundCompletedEvent event) {
+        final Optional<Order> order = orderRepository.findById(event.orderId());
+        if (order.isEmpty()) {
+            throw new EntityNotFoundException(String.format("Couldn't find order by provided id: %s", event.orderId()));
+        }
+        order.get().setStatus(OrderStatus.CANCELLED);
+
+        final Order savedOrder = orderRepository.save(order.get());
+        log.info("Order with updated status and with id {} successfully saved.", savedOrder.getId());
     }
 
     private BigDecimal getTotalAmount(List<OrderItemDto> items) {

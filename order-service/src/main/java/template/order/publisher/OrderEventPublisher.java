@@ -1,7 +1,7 @@
 package template.order.publisher;
 
-import template.order.domain.Order;
+import template.order.domain.dto.OrderDto;
 
 public interface OrderEventPublisher {
-    void publishOrderCreated(Order order);
+    void publishOrderCreated(OrderDto.Publish publishOrder);
 }

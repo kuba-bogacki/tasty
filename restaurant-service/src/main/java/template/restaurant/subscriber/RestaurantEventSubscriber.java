@@ -1,6 +1,5 @@
 package template.restaurant.subscriber;
 
-import common.events.order.OrderAcceptedEvent;
 import common.events.payment.PaymentCompletedEvent;
 import common.events.topic.Topics;
 import org.springframework.kafka.annotation.KafkaListener;

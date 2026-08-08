@@ -16,6 +16,7 @@ public record OrderCreatedEvent(
         @NotBlank UUID orderId,
         @NotBlank UUID customerId,
         @NotBlank UUID restaurantId,
+        @NotBlank String paymentMethod,
         @NotBlank BigDecimal totalAmount
 
 ) implements DomainEvent {}
