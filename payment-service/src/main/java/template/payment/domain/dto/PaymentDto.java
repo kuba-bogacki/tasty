@@ -39,4 +39,13 @@ public class PaymentDto {
             @NotBlank String reason
 
     ) {}
+
+    @Builder
+    public record Refund(
+
+            @NotBlank UUID paymentId,
+            @NotBlank UUID orderId,
+            @NotBlank UUID customerId
+
+    ) {}
 }

@@ -1,6 +1,8 @@
 package template.order.publisher;
 
+import common.events.order.OrderAcceptedEvent;
 import common.events.order.OrderCreatedEvent;
+import common.events.order.OrderRejectedEvent;
 import common.events.topic.Topics;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,33 @@ public class DefaultOrderEventPublisher implements OrderEventPublisher {
                 .build();
 
         kafkaTemplate.send(Topics.ORDER_CREATED, publishOrder.orderId().toString(), event);
-        log.info("Event 'create order' with id: {} successfully published.", event.eventId());
+        log.info("Event 'order created' with id: {} successfully published.", event.eventId());
+    }
+
+    @Override
+    public void publishOrderAccepted(OrderDto.Accept acceptOrder) {
+        final OrderAcceptedEvent event = OrderAcceptedEvent.builder()
+                .eventId(UUID.randomUUID())
+                .occurredAt(Instant.now())
+                .orderId(acceptOrder.orderId())
+                .restaurantId(acceptOrder.restaurantId())
+                .build();
+
+        kafkaTemplate.send(Topics.ORDER_ACCEPTED, acceptOrder.orderId().toString(), event);
+        log.info("Event 'order accepted' with id: {} successfully published.", event.eventId());
+    }
+
+    @Override
+    public void publishOrderRejected(OrderDto.Reject rejectOrder) {
+        final OrderRejectedEvent event = OrderRejectedEvent.builder()
+                .eventId(UUID.randomUUID())
+                .occurredAt(Instant.now())
+                .orderId(rejectOrder.orderId())
+                .restaurantId(rejectOrder.restaurantId())
+                .reason(rejectOrder.reason())
+                .build();
+
+        kafkaTemplate.send(Topics.ORDER_REJECTED, rejectOrder.orderId().toString(), event);
+        log.info("Event 'order rejected' with id: {} successfully published.", event.eventId());
     }
 }

@@ -32,4 +32,23 @@ public class OrderDto {
             @NotBlank BigDecimal totalAmount
 
     ) {}
+
+    @Builder
+    public record Accept(
+
+            @NotBlank UUID orderId,
+            @NotBlank UUID customerId,
+            @NotBlank UUID restaurantId
+
+    ) {}
+
+    @Builder
+    public record Reject(
+
+            @NotBlank UUID orderId,
+            @NotBlank UUID customerId,
+            @NotBlank UUID restaurantId,
+            @NotBlank String reason
+
+    ) {}
 }

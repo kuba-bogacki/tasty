@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import template.restaurant.domain.OrderPreparation;
 import template.restaurant.domain.Restaurant;
+import template.restaurant.domain.dto.OrderPreparationDto;
 import template.restaurant.domain.dto.RestaurantDto;
 import template.restaurant.domain.type.PreparationStatus;
 import template.restaurant.domain.type.RestaurantStatus;
@@ -66,24 +67,33 @@ public class DefaultRestaurantService implements RestaurantService {
                 .build();
 
         if (RestaurantStatus.CLOSED == restaurant.get().getStatus()) {
-            final OrderPreparation orderRejected = orderPreparation.toBuilder()
-                    .orderId(event.orderId())
-                    .restaurantId(event.restaurantId())
+            final OrderPreparation preparationRejected = orderPreparation.toBuilder()
                     .status(PreparationStatus.REJECTED)
                     .build();
 
-            final OrderPreparation savedRejectedOrder = orderPreparationRepository.save(orderRejected);
+            final OrderPreparation savedRejectedPreparation = orderPreparationRepository.save(preparationRejected);
             log.warn("Restaurant closed, cannot finalize order. Refund was requested.");
-            restaurantEventPublisher.publishOrderRejected(savedRejectedOrder);
+
+            final OrderPreparationDto.Rejected rejectedPreparation = OrderPreparationDto.Rejected.builder()
+                    .orderId(savedRejectedPreparation.getOrderId())
+                    .restaurantId(savedRejectedPreparation.getRestaurantId())
+                    .reason("Restaurant has been closed.")
+                    .build();
+            restaurantEventPublisher.publishPreparationRejected(rejectedPreparation);
         } else {
-            final OrderPreparation orderAccepted = orderPreparation.toBuilder()
+            final OrderPreparation preparationAccepted = orderPreparation.toBuilder()
                     .status(PreparationStatus.ACCEPTED)
                     .acceptedAt(Instant.now())
                     .build();
 
-            final OrderPreparation savedAcceptedOrder = orderPreparationRepository.save(orderAccepted);
-            log.info("New order preparation with id {} successfully saved.", savedAcceptedOrder.getId());
-            restaurantEventPublisher.publishOrderAccepted(savedAcceptedOrder);
+            final OrderPreparation savedAcceptedPreparation = orderPreparationRepository.save(preparationAccepted);
+            log.info("New order preparation with id {} successfully saved.", savedAcceptedPreparation.getId());
+
+            final OrderPreparationDto.Accepted acceptedPreparation = OrderPreparationDto.Accepted.builder()
+                    .orderId(savedAcceptedPreparation.getOrderId())
+                    .restaurantId(savedAcceptedPreparation.getRestaurantId())
+                    .build();
+            restaurantEventPublisher.publishPreparationAccepted(acceptedPreparation);
         }
     }
 }

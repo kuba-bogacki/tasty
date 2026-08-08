@@ -2,7 +2,7 @@ package template.notification.subscriber;
 
 import common.events.deliver.CourierAssignedEvent;
 import common.events.payment.PaymentCompletedEvent;
-import common.events.payment.RefundCompletedEvent;
+import common.events.payment.PaymentRefundedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -28,7 +28,7 @@ public class DefaultNotificationEventSubscriber implements NotificationEventSubs
     }
 
     @Override
-    public void subscribeRefundCompleted(RefundCompletedEvent event) {
+    public void subscribePaymentRefunded(PaymentRefundedEvent event) {
         log.info("Event 'refund completed' with id: {} successfully subscribed.", event.eventId());
         notificationService.sendRefundCompleted(event);
     }

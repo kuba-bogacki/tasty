@@ -13,7 +13,9 @@ public final class Topics {
     public static final String ORDER_DELIVERED = "order-delivered";
     public static final String PAYMENT_COMPLETED = "payment-completed";
     public static final String PAYMENT_FAILED = "payment-failed";
-    public static final String REFUND_COMPLETED = "refund-completed";
+    public static final String PAYMENT_REFUNDED = "payment-refunded";
+    public static final String PREPARATION_ACCEPTED = "preparation-accepted";
+    public static final String PREPARATION_REJECTED = "preparation-rejected";
     public static final String COURIER_ASSIGNED = "courier-assigned";
 
     // Group ids

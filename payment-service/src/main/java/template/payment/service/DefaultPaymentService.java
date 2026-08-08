@@ -86,18 +86,26 @@ public class DefaultPaymentService implements PaymentService {
             throw new EntityNotFoundException(String.format("Couldn't find payment accessing order id equal: %s", event.orderId()));
         }
 
-        final Payment refundPayment = Payment.builder()
-                .orderId(event.orderId())
+        final PaymentDto.Process paymentProcess = PaymentDto.Process.builder()
                 .customerId(completedPayment.get().getCustomerId())
-                .restaurantId(event.restaurantId())
-                .amount(completedPayment.get().getAmount())
-                .status(PaymentStatus.REFUNDED)
-                .method(PaymentMethod.CARD)
-                .createdAt(Instant.now())
+                .restaurantId(completedPayment.get().getRestaurantId())
+                .method(completedPayment.get().getMethod())
+                .totalAmount(completedPayment.get().getAmount())
                 .build();
 
-        final Payment savedRefundPayment = paymentRepository.save(refundPayment);
-        log.info("New refund payment with id {} successfully saved.", savedRefundPayment.getId());
-        paymentEventPublisher.publishRefundCompleted(savedRefundPayment);
+        paymentProvider.processPaymentRefund(paymentProcess);
+
+        completedPayment.get().setStatus(PaymentStatus.REFUNDED);
+
+        final Payment savedRefundPayment = paymentRepository.save(completedPayment.get());
+        log.info("Refund payment with 'Refunded' status and with id {} successfully updated.", savedRefundPayment.getId());
+
+        final PaymentDto.Refund refundPayment = PaymentDto.Refund.builder()
+                .paymentId(savedRefundPayment.getId())
+                .orderId(savedRefundPayment.getOrderId())
+                .customerId(savedRefundPayment.getCustomerId())
+                .build();
+
+        paymentEventPublisher.publishPaymentRefunded(refundPayment);
     }
 }

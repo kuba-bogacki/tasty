@@ -2,7 +2,7 @@ package template.notification.service;
 
 import common.events.deliver.CourierAssignedEvent;
 import common.events.payment.PaymentCompletedEvent;
-import common.events.payment.RefundCompletedEvent;
+import common.events.payment.PaymentRefundedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,6 @@ import template.notification.domain.type.NotificationType;
 import template.notification.repository.NotificationRepository;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -50,7 +49,7 @@ public class DefaultNotificationService implements NotificationService {
     }
 
     @Override
-    public void sendRefundCompleted(RefundCompletedEvent event) {
+    public void sendRefundCompleted(PaymentRefundedEvent event) {
         final Notification notification = Notification.builder()
                 .customerId(event.orderId())
                 .type(NotificationType.PUSH)

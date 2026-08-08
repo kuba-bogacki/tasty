@@ -1,6 +1,8 @@
 package template.order.service;
 
-import common.events.payment.RefundCompletedEvent;
+import common.events.payment.PaymentRefundedEvent;
+import common.events.preparation.PreparationAcceptedEvent;
+import common.events.preparation.PreparationRejectedEvent;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +56,48 @@ public class DefaultOrderService implements OrderService {
     }
 
     @Override
-    public void processCancel(RefundCompletedEvent event) {
+    public void acceptOrder(PreparationAcceptedEvent event) {
+        final Optional<Order> order = orderRepository.findById(event.orderId());
+        if (order.isEmpty()) {
+            throw new EntityNotFoundException(String.format("Couldn't find order to accept with id equal: %s", event.orderId()));
+        }
+        order.get().setStatus(OrderStatus.ACCEPTED);
+
+        final Order savedOrder = orderRepository.save(order.get());
+        log.info("Order with 'Accepted' status and with id {} successfully updated.", savedOrder.getId());
+
+        final OrderDto.Accept acceptedOrder = OrderDto.Accept.builder()
+                .orderId(savedOrder.getId())
+                .customerId(savedOrder.getCustomerId())
+                .restaurantId(savedOrder.getRestaurantId())
+                .build();
+
+        orderEventPublisher.publishOrderAccepted(acceptedOrder);
+    }
+
+    @Override
+    public void rejectOrder(PreparationRejectedEvent event) {
+        final Optional<Order> order = orderRepository.findById(event.orderId());
+        if (order.isEmpty()) {
+            throw new EntityNotFoundException(String.format("Couldn't find order to reject with id equal: %s", event.orderId()));
+        }
+        order.get().setStatus(OrderStatus.REJECTED);
+
+        final Order savedOrder = orderRepository.save(order.get());
+        log.info("Order with 'Rejected' status and with id {} successfully updated.", savedOrder.getId());
+
+        final OrderDto.Reject rejectedOrder = OrderDto.Reject.builder()
+                .orderId(savedOrder.getId())
+                .customerId(savedOrder.getCustomerId())
+                .restaurantId(savedOrder.getRestaurantId())
+                .reason(event.reason())
+                .build();
+
+        orderEventPublisher.publishOrderRejected(rejectedOrder);
+    }
+
+    @Override
+    public void processCancel(PaymentRefundedEvent event) {
         final Optional<Order> order = orderRepository.findById(event.orderId());
         if (order.isEmpty()) {
             throw new EntityNotFoundException(String.format("Couldn't find order by provided id: %s", event.orderId()));

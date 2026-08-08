@@ -1,9 +1,9 @@
 package template.restaurant.publisher;
 
-import template.restaurant.domain.OrderPreparation;
+import template.restaurant.domain.dto.OrderPreparationDto;
 
 public interface RestaurantEventPublisher {
 
-    void publishOrderAccepted(OrderPreparation orderPreparation);
-    void publishOrderRejected(OrderPreparation orderPreparation);
+    void publishPreparationAccepted(OrderPreparationDto.Accepted acceptedPreparation);
+    void publishPreparationRejected(OrderPreparationDto.Rejected rejectedPreparation);
 }

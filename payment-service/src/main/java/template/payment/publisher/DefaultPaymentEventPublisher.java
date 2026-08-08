@@ -2,13 +2,12 @@ package template.payment.publisher;
 
 import common.events.payment.PaymentCompletedEvent;
 import common.events.payment.PaymentFailedEvent;
-import common.events.payment.RefundCompletedEvent;
+import common.events.payment.PaymentRefundedEvent;
 import common.events.topic.Topics;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-import template.payment.domain.Payment;
 import template.payment.domain.dto.PaymentDto;
 
 import java.time.Instant;
@@ -53,15 +52,16 @@ public class DefaultPaymentEventPublisher implements PaymentEventPublisher {
     }
 
     @Override
-    public void publishRefundCompleted(Payment payment) {
-        final RefundCompletedEvent event = RefundCompletedEvent.builder()
+    public void publishPaymentRefunded(PaymentDto.Refund refundPayment) {
+        final PaymentRefundedEvent event = PaymentRefundedEvent.builder()
                 .eventId(UUID.randomUUID())
                 .occurredAt(Instant.now())
-                .paymentId(payment.getId())
-                .orderId(payment.getOrderId())
+                .paymentId(refundPayment.paymentId())
+                .orderId(refundPayment.orderId())
+                .customerId(refundPayment.customerId())
                 .build();
 
-        kafkaTemplate.send(Topics.REFUND_COMPLETED, payment.getId().toString(), event);
-        log.info("Event 'refund completed' with id: {} successfully published.", event.eventId());
+        kafkaTemplate.send(Topics.PAYMENT_REFUNDED, refundPayment.paymentId().toString(), event);
+        log.info("Event 'payment refunded' with id: {} successfully published.", event.eventId());
     }
 }

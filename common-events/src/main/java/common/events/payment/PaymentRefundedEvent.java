@@ -8,11 +8,12 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Builder
-public record RefundCompletedEvent(
+public record PaymentRefundedEvent(
 
         @NotBlank UUID eventId,
         @NotBlank Instant occurredAt,
         @NotBlank UUID paymentId,
-        @NotBlank UUID orderId
+        @NotBlank UUID orderId,
+        @NotBlank UUID customerId
 
 ) implements DomainEvent {}
