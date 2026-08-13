@@ -7,7 +7,7 @@ public enum PreparationStatus {
 
     ACCEPTED("Accepted"),
     REJECTED("Rejected"),
-    CANCELLED("Cancelled"),
+    WITHDRAW("Withdraw"),
     IN_PROGRESS("In progress"),
     READY("Ready");
 

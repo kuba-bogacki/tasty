@@ -8,14 +8,17 @@ public final class Topics {
 
     // Topics
     public static final String ORDER_CREATED = "order-created";
-    public static final String ORDER_REJECTED = "order-rejected";
     public static final String ORDER_ACCEPTED = "order-accepted";
+    public static final String ORDER_REJECTED = "order-rejected";
+    public static final String ORDER_CANCELLED = "order-cancelled";
+    public static final String ORDER_WITHDRAW = "order-withdraw";
     public static final String ORDER_DELIVERED = "order-delivered";
     public static final String PAYMENT_COMPLETED = "payment-completed";
     public static final String PAYMENT_FAILED = "payment-failed";
     public static final String PAYMENT_REFUNDED = "payment-refunded";
     public static final String PREPARATION_ACCEPTED = "preparation-accepted";
     public static final String PREPARATION_REJECTED = "preparation-rejected";
+    public static final String PREPARATION_WITHDRAW = "preparation-withdraw";
     public static final String COURIER_ASSIGNED = "courier-assigned";
 
     // Group ids

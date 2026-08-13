@@ -3,8 +3,6 @@ package common.events.payment;
 import common.events.DomainEvent;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
-import lombok.Data;
-import lombok.extern.jackson.Jacksonized;
 
 import java.math.BigDecimal;
 import java.time.Instant;

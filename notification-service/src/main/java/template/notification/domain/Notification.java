@@ -2,6 +2,7 @@ package template.notification.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import template.notification.domain.type.NotificationExternalType;
 import template.notification.domain.type.NotificationStatus;
 import template.notification.domain.type.NotificationType;
 
@@ -21,16 +22,22 @@ public class Notification {
     private UUID id;
 
     @Column(nullable = false)
-    private UUID customerId;
+    private UUID externalId;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private NotificationType type;
 
     @Column(nullable = false)
-    private String content;
-
     @Enumerated(EnumType.STRING)
     private NotificationStatus status;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private NotificationExternalType externalType;
+
+    @Column(nullable = false)
+    private String content;
 
     @Column(nullable = false)
     private Instant createdAt;

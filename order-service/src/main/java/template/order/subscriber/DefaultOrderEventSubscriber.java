@@ -1,8 +1,9 @@
 package template.order.subscriber;
 
-import common.events.payment.PaymentRefundedEvent;
+import common.events.payment.PaymentFailedEvent;
 import common.events.preparation.PreparationAcceptedEvent;
 import common.events.preparation.PreparationRejectedEvent;
+import common.events.preparation.PreparationWithdrawEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,18 +19,24 @@ public class DefaultOrderEventSubscriber implements OrderEventSubscriber {
     @Override
     public void subscribePreparationAccepted(PreparationAcceptedEvent event) {
         log.info("Event 'preparation accepted' with id: {} successfully subscribed.", event.eventId());
-        orderService.acceptOrder(event);
+        orderService.handlePreparationAccepted(event);
     }
 
     @Override
     public void subscribePreparationRejected(PreparationRejectedEvent event) {
         log.info("Event 'preparation rejected' with id: {} successfully subscribed.", event.eventId());
-        orderService.rejectOrder(event);
+        orderService.handlePreparationRejected(event);
     }
 
     @Override
-    public void subscribeRefundCompleted(PaymentRefundedEvent event) {
-        log.info("Event 'refund payment' with id: {} successfully subscribed.", event.eventId());
-        orderService.processCancel(event);
+    public void subscribePreparationWithdraw(PreparationWithdrawEvent event) {
+        log.info("Event 'preparation withdraw' with id: {} successfully subscribed.", event.eventId());
+        orderService.handlePreparationWithdraw(event);
+    }
+
+    @Override
+    public void subscribePaymentFailed(PaymentFailedEvent event) {
+        log.info("Event 'payment failed' with id: {} successfully subscribed.", event.eventId());
+        orderService.handlePaymentFailed(event);
     }
 }

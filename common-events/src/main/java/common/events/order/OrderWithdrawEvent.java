@@ -1,4 +1,4 @@
-package common.events.payment;
+package common.events.order;
 
 import common.events.DomainEvent;
 import jakarta.validation.constraints.NotBlank;
@@ -8,12 +8,12 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Builder
-public record PaymentFailedEvent(
+public record OrderWithdrawEvent(
 
         @NotBlank UUID eventId,
         @NotBlank Instant occurredAt,
-        @NotBlank UUID paymentId,
         @NotBlank UUID orderId,
-        @NotBlank UUID customerId
+        @NotBlank UUID customerId,
+        @NotBlank UUID restaurantId
 
 ) implements DomainEvent {}

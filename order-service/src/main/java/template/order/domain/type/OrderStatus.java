@@ -12,6 +12,7 @@ public enum OrderStatus {
     REJECTED("Rejected"),
     PREPARING("Preparing"),
     CANCELLED("Cancelled"),
+    WITHDRAW("Withdraw"),
     READY_FOR_PICKUP("Ready for pickup"),
     IN_DELIVERY("In delivery"),
     DELIVERED("Delivered");

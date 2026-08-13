@@ -1,12 +1,15 @@
 package template.notification.service;
 
 import common.events.deliver.CourierAssignedEvent;
-import common.events.payment.PaymentCompletedEvent;
+import common.events.order.OrderAcceptedEvent;
+import common.events.order.OrderCancelledEvent;
 import common.events.payment.PaymentRefundedEvent;
 
 public interface NotificationService {
 
-    void sendPaymentNotify(PaymentCompletedEvent event);
-    void sendCourierAssigned(CourierAssignedEvent event);
-    void sendRefundCompleted(PaymentRefundedEvent event);
+    // Events handlers
+    void handleOrderAccepted(OrderAcceptedEvent event);
+    void handleOrderCancelled(OrderCancelledEvent event);
+    void handlePaymentRefunded(PaymentRefundedEvent event);
+    void handleCourierAssigned(CourierAssignedEvent event);
 }

@@ -1,6 +1,5 @@
 package template.restaurant.subscriber;
 
-import common.events.order.OrderAcceptedEvent;
 import common.events.payment.PaymentCompletedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +16,6 @@ public class DefaultRestaurantEventSubscriber implements RestaurantEventSubscrib
     @Override
     public void subscribePaymentCompleted(PaymentCompletedEvent event) {
         log.info("Event 'payment completed' with id: {} successfully subscribed.", event.eventId());
-        restaurantService.acceptOrder(event);
+        restaurantService.handlePaymentCompleted(event);
     }
 }

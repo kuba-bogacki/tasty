@@ -13,6 +13,7 @@ public record OrderAcceptedEvent(
         @NotBlank UUID eventId,
         @NotBlank Instant occurredAt,
         @NotBlank UUID orderId,
+        @NotBlank UUID customerId,
         @NotBlank UUID restaurantId
 
 ) implements DomainEvent {}

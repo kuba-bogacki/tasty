@@ -1,7 +1,8 @@
 package template.notification.subscriber;
 
 import common.events.deliver.CourierAssignedEvent;
-import common.events.payment.PaymentCompletedEvent;
+import common.events.order.OrderAcceptedEvent;
+import common.events.order.OrderCancelledEvent;
 import common.events.payment.PaymentRefundedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,20 +17,26 @@ public class DefaultNotificationEventSubscriber implements NotificationEventSubs
     private final NotificationService notificationService;
 
     @Override
-    public void subscribePaymentCompleted(PaymentCompletedEvent event) {
-        log.info("Event 'payment completed' with id: {} successfully subscribed.", event.eventId());
-        notificationService.sendPaymentNotify(event);
+    public void subscribeOrderAccepted(OrderAcceptedEvent event) {
+        log.info("Event 'order accepted' with id: {} successfully subscribed.", event.eventId());
+        notificationService.handleOrderAccepted(event);
+    }
+
+    @Override
+    public void subscribeOrderCancelled(OrderCancelledEvent event) {
+        log.info("Event 'order cancelled' with id: {} successfully subscribed.", event.eventId());
+        notificationService.handleOrderCancelled(event);
     }
 
     @Override
     public void subscribeCourierAssigned(CourierAssignedEvent event) {
         log.info("Event 'courier assigned' with id: {} successfully subscribed.", event.eventId());
-        notificationService.sendCourierAssigned(event);
+        notificationService.handleCourierAssigned(event);
     }
 
     @Override
     public void subscribePaymentRefunded(PaymentRefundedEvent event) {
-        log.info("Event 'refund completed' with id: {} successfully subscribed.", event.eventId());
-        notificationService.sendRefundCompleted(event);
+        log.info("Event 'payment refunded' with id: {} successfully subscribed.", event.eventId());
+        notificationService.handlePaymentRefunded(event);
     }
 }

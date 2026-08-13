@@ -1,13 +1,19 @@
 package template.order.service;
 
-import common.events.payment.PaymentRefundedEvent;
+import common.events.payment.PaymentFailedEvent;
 import common.events.preparation.PreparationAcceptedEvent;
 import common.events.preparation.PreparationRejectedEvent;
+import common.events.preparation.PreparationWithdrawEvent;
 import template.order.domain.dto.OrderDto;
 
 public interface OrderService {
+
+    // Controller handlers
     void createOrder(OrderDto.Create createDto);
-    void acceptOrder(PreparationAcceptedEvent event);
-    void rejectOrder(PreparationRejectedEvent event);
-    void processCancel(PaymentRefundedEvent event);
+
+    // Event handlers
+    void handlePreparationAccepted(PreparationAcceptedEvent event);
+    void handlePreparationRejected(PreparationRejectedEvent event);
+    void handlePreparationWithdraw(PreparationWithdrawEvent event);
+    void handlePaymentFailed(PaymentFailedEvent event);
 }

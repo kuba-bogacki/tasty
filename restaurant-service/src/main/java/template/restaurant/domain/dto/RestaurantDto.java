@@ -1,6 +1,9 @@
 package template.restaurant.domain.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
+
+import java.util.UUID;
 
 public class RestaurantDto {
 
@@ -17,6 +20,15 @@ public class RestaurantDto {
 
             @NotBlank String id,
             @NotBlank String status
+
+    ) {}
+
+    @Builder
+    public record Withdraw(
+
+            @NotBlank UUID orderId,
+            @NotBlank UUID customerId,
+            @NotBlank UUID restaurantId
 
     ) {}
 }

@@ -26,4 +26,10 @@ public class RestaurantController {
         restaurantService.updateRestaurantStatus(updateDto);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
+
+    @PutMapping(value = "/withdraw")
+    public ResponseEntity<?> withdrawPreparation(@Valid @RequestBody RestaurantDto.Withdraw withdrawDto) {
+        restaurantService.withdrawPreparation(withdrawDto);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
 }

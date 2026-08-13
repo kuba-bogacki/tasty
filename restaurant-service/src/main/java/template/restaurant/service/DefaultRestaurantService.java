@@ -11,6 +11,7 @@ import template.restaurant.domain.dto.OrderPreparationDto;
 import template.restaurant.domain.dto.RestaurantDto;
 import template.restaurant.domain.type.PreparationStatus;
 import template.restaurant.domain.type.RestaurantStatus;
+import template.restaurant.exception.WithdrawForbiddenException;
 import template.restaurant.publisher.RestaurantEventPublisher;
 import template.restaurant.repository.OrderPreparationRepository;
 import template.restaurant.repository.RestaurantRepository;
@@ -55,7 +56,30 @@ public class DefaultRestaurantService implements RestaurantService {
     }
 
     @Override
-    public void acceptOrder(PaymentCompletedEvent event) {
+    public void withdrawPreparation(RestaurantDto.Withdraw withdrawDto) {
+        final Optional<OrderPreparation> orderPreparation = orderPreparationRepository.findByOrderIdAndRestaurantId(withdrawDto.orderId(), withdrawDto.restaurantId());
+        if (orderPreparation.isEmpty()) {
+            throw new EntityNotFoundException(String.format("Couldn't find order preparation with order id equal: %s and restaurant id equal: %s", withdrawDto.orderId(), withdrawDto.restaurantId()));
+        }
+
+        final PreparationStatus currentStatus = orderPreparation.get().getStatus();
+        if (PreparationStatus.ACCEPTED != currentStatus) {
+            throw new WithdrawForbiddenException(String.format("Withdraw preparation impossible due to forbidden preparation status: %s", currentStatus));
+        }
+
+        orderPreparation.get().setStatus(PreparationStatus.WITHDRAW);
+        final OrderPreparation updatedOrderPreparation = orderPreparationRepository.save(orderPreparation.get());
+        log.info("Updated order preparation with id {} successfully saved.", updatedOrderPreparation.getId());
+
+        final OrderPreparationDto.Withdraw withdrawPreparation = OrderPreparationDto.Withdraw.builder()
+                .orderId(updatedOrderPreparation.getOrderId())
+                .restaurantId(updatedOrderPreparation.getRestaurantId())
+                .build();
+        restaurantEventPublisher.publishPreparationWithdraw(withdrawPreparation);
+    }
+
+    @Override
+    public void handlePaymentCompleted(PaymentCompletedEvent event) {
         final Optional<Restaurant> restaurant = restaurantRepository.findById(event.restaurantId());
         if (restaurant.isEmpty()) {
             throw new EntityNotFoundException(String.format("Couldn't find restaurant with id equal: %s", event.restaurantId()));

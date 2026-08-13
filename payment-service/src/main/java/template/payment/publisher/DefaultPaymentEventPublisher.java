@@ -33,7 +33,7 @@ public class DefaultPaymentEventPublisher implements PaymentEventPublisher {
                 .build();
 
         kafkaTemplate.send(Topics.PAYMENT_COMPLETED, completedPayment.paymentId().toString(), event);
-        log.info("Event 'payment complete' with id: {} successfully published.", event.eventId());
+        log.info("Event 'payment completed' with id: {} successfully published.", event.eventId());
     }
 
     @Override
@@ -44,7 +44,6 @@ public class DefaultPaymentEventPublisher implements PaymentEventPublisher {
                 .paymentId(failedPayment.paymentId())
                 .orderId(failedPayment.orderId())
                 .customerId(failedPayment.customerId())
-                .reason(failedPayment.reason())
                 .build();
 
         kafkaTemplate.send(Topics.PAYMENT_FAILED, failedPayment.paymentId().toString(), event);

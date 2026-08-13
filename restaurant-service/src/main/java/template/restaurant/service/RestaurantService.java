@@ -5,7 +5,11 @@ import template.restaurant.domain.dto.RestaurantDto;
 
 public interface RestaurantService {
 
+    // Controller handlers
     void createRestaurant(RestaurantDto.Create createDto);
     void updateRestaurantStatus(RestaurantDto.Update updateDto);
-    void acceptOrder(PaymentCompletedEvent event);
+    void withdrawPreparation(RestaurantDto.Withdraw withdrawDto);
+
+    // Events handlers
+    void handlePaymentCompleted(PaymentCompletedEvent event);
 }

@@ -51,4 +51,23 @@ public class OrderDto {
             @NotBlank String reason
 
     ) {}
+
+    @Builder
+    public record Cancel(
+
+            @NotBlank UUID orderId,
+            @NotBlank UUID customerId,
+            @NotBlank UUID restaurantId,
+            @NotBlank String reason
+
+    ) {}
+
+    @Builder
+    public record Withdraw(
+
+            @NotBlank UUID orderId,
+            @NotBlank UUID customerId,
+            @NotBlank UUID restaurantId
+
+    ) {}
 }

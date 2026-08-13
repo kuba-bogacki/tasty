@@ -1,8 +1,6 @@
 package template.order.publisher;
 
-import common.events.order.OrderAcceptedEvent;
-import common.events.order.OrderCreatedEvent;
-import common.events.order.OrderRejectedEvent;
+import common.events.order.*;
 import common.events.topic.Topics;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +40,7 @@ public class DefaultOrderEventPublisher implements OrderEventPublisher {
                 .eventId(UUID.randomUUID())
                 .occurredAt(Instant.now())
                 .orderId(acceptOrder.orderId())
+                .customerId(acceptOrder.customerId())
                 .restaurantId(acceptOrder.restaurantId())
                 .build();
 
@@ -61,5 +60,33 @@ public class DefaultOrderEventPublisher implements OrderEventPublisher {
 
         kafkaTemplate.send(Topics.ORDER_REJECTED, rejectOrder.orderId().toString(), event);
         log.info("Event 'order rejected' with id: {} successfully published.", event.eventId());
+    }
+
+    @Override
+    public void publishOrderCancelled(OrderDto.Cancel cancelOrder) {
+        final OrderCancelledEvent event = OrderCancelledEvent.builder()
+                .eventId(UUID.randomUUID())
+                .occurredAt(Instant.now())
+                .orderId(cancelOrder.orderId())
+                .customerId(cancelOrder.customerId())
+                .restaurantId(cancelOrder.restaurantId())
+                .build();
+
+        kafkaTemplate.send(Topics.ORDER_CANCELLED, cancelOrder.orderId().toString(), event);
+        log.info("Event 'order cancelled' with id: {} successfully published.", event.eventId());
+    }
+
+    @Override
+    public void publishOrderWithdraw(OrderDto.Withdraw rejectedOrder) {
+        final OrderWithdrawEvent event = OrderWithdrawEvent.builder()
+                .eventId(UUID.randomUUID())
+                .occurredAt(Instant.now())
+                .orderId(rejectedOrder.orderId())
+                .customerId(rejectedOrder.customerId())
+                .restaurantId(rejectedOrder.restaurantId())
+                .build();
+
+        kafkaTemplate.send(Topics.ORDER_WITHDRAW, rejectedOrder.orderId().toString(), event);
+        log.info("Event 'order withdraw' with id: {} successfully published.", event.eventId());
     }
 }

@@ -2,6 +2,7 @@ package template.payment.service;
 
 import common.events.order.OrderCreatedEvent;
 import common.events.order.OrderRejectedEvent;
+import common.events.order.OrderWithdrawEvent;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ public class DefaultPaymentService implements PaymentService {
 
     @Override
     @Transactional
-    public void processPayment(OrderCreatedEvent event) {
+    public void handleOrderCreated(OrderCreatedEvent event) {
         final Payment payment = Payment.builder()
                 .orderId(event.orderId())
                 .customerId(event.customerId())
@@ -80,24 +81,38 @@ public class DefaultPaymentService implements PaymentService {
 
     @Override
     @Transactional
-    public void processRefund(OrderRejectedEvent event) {
-        final Optional<Payment> completedPayment = paymentRepository.findByOrderId(event.orderId());
+    public void handleOrderRejected(OrderRejectedEvent event) {
+        final Optional<Payment> completedPayment = paymentRepository.findByOrderIdAndRestaurantId(event.orderId(), event.restaurantId());
         if (completedPayment.isEmpty()) {
-            throw new EntityNotFoundException(String.format("Couldn't find payment accessing order id equal: %s", event.orderId()));
+            throw new EntityNotFoundException(String.format("Couldn't find payment accessing order id equal: %s and restaurant id equal: %s", event.orderId(), event.restaurantId()));
         }
 
+        refundPayment(completedPayment.get());
+    }
+
+    @Override
+    public void handleOrderWithdraw(OrderWithdrawEvent event) {
+        final Optional<Payment> completedPayment = paymentRepository.findByOrderIdAndRestaurantId(event.orderId(), event.restaurantId());
+        if (completedPayment.isEmpty()) {
+            throw new EntityNotFoundException(String.format("Couldn't find payment accessing order id equal: %s and restaurant id equal: %s", event.orderId(), event.restaurantId()));
+        }
+
+        refundPayment(completedPayment.get());
+    }
+
+    private void refundPayment(Payment payment) {
         final PaymentDto.Process paymentProcess = PaymentDto.Process.builder()
-                .customerId(completedPayment.get().getCustomerId())
-                .restaurantId(completedPayment.get().getRestaurantId())
-                .method(completedPayment.get().getMethod())
-                .totalAmount(completedPayment.get().getAmount())
+                .customerId(payment.getCustomerId())
+                .restaurantId(payment.getRestaurantId())
+                .method(payment.getMethod())
+                .totalAmount(payment.getAmount())
                 .build();
 
         paymentProvider.processPaymentRefund(paymentProcess);
 
-        completedPayment.get().setStatus(PaymentStatus.REFUNDED);
+        payment.setStatus(PaymentStatus.REFUNDED);
 
-        final Payment savedRefundPayment = paymentRepository.save(completedPayment.get());
+        final Payment savedRefundPayment = paymentRepository.save(payment);
         log.info("Refund payment with 'Refunded' status and with id {} successfully updated.", savedRefundPayment.getId());
 
         final PaymentDto.Refund refundPayment = PaymentDto.Refund.builder()

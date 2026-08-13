@@ -24,4 +24,13 @@ public class OrderPreparationDto {
             @NotBlank String reason
 
     ) {}
+
+    @Builder
+    public record Withdraw(
+
+            @NotBlank UUID orderId,
+            @NotBlank UUID customerId,
+            @NotBlank UUID restaurantId
+
+    ) {}
 }
