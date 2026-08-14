@@ -102,4 +102,18 @@ public class DefaultOrderEventPublisher implements OrderEventPublisher {
         kafkaTemplate.send(Topics.ORDER_PREPARING, prepareOrder.id().toString(), event);
         log.info("Event 'order preparing' with id: {} successfully published.", event.eventId());
     }
+
+    @Override
+    public void publishOrderReadyForPickUp(OrderDto.Ready readyForPickUpOrder) {
+        final OrderReadyEvent event = OrderReadyEvent.builder()
+                .eventId(UUID.randomUUID())
+                .occurredAt(Instant.now())
+                .orderId(readyForPickUpOrder.id())
+                .customerId(readyForPickUpOrder.customerId())
+                .restaurantId(readyForPickUpOrder.restaurantId())
+                .build();
+
+        kafkaTemplate.send(Topics.ORDER_READY, readyForPickUpOrder.id().toString(), event);
+        log.info("Event 'order ready for pick up' with id: {} successfully published.", event.eventId());
+    }
 }

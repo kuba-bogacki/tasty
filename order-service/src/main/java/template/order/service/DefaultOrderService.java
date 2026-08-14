@@ -1,10 +1,7 @@
 package template.order.service;
 
 import common.events.payment.PaymentFailedEvent;
-import common.events.preparation.PreparationAcceptedEvent;
-import common.events.preparation.PreparationInProgressEvent;
-import common.events.preparation.PreparationRejectedEvent;
-import common.events.preparation.PreparationWithdrawEvent;
+import common.events.preparation.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -123,6 +120,22 @@ public class DefaultOrderService implements OrderService {
                 .restaurantId(savedOrder.getRestaurantId())
                 .build();
         orderEventPublisher.publishOrderPreparing(prepareOrder);
+    }
+
+    @Override
+    public void handlePreparationReady(PreparationReadyEvent event) {
+        final Order order = findOrder(event.orderId());
+        order.setStatus(OrderStatus.READY_FOR_PICKUP);
+
+        final Order savedOrder = orderRepository.save(order);
+        log.info("Order with 'Ready for pick up' status and with id {} successfully updated.", savedOrder.getId());
+
+        final OrderDto.Ready readyForPickUpOrder = OrderDto.Ready.builder()
+                .id(savedOrder.getId())
+                .customerId(savedOrder.getCustomerId())
+                .restaurantId(savedOrder.getRestaurantId())
+                .build();
+        orderEventPublisher.publishOrderReadyForPickUp(readyForPickUpOrder);
     }
 
     @Override

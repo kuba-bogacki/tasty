@@ -38,4 +38,10 @@ public class RestaurantController {
         restaurantService.startPreparation(prepareDto);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
+
+    @PatchMapping(value = "/ready")
+    public ResponseEntity<?> finishPreparation(@Valid @RequestBody RestaurantDto.Ready readyDto) {
+        restaurantService.finishPreparation(readyDto);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
 }

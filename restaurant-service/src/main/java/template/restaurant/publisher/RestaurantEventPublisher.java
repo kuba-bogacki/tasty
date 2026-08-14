@@ -8,4 +8,5 @@ public interface RestaurantEventPublisher {
     void publishPreparationRejected(OrderPreparationDto.Rejected rejectedPreparation);
     void publishPreparationWithdraw(OrderPreparationDto.Withdraw withdrawPreparation);
     void publishPreparationInProgress(OrderPreparationDto.Prepare startPreparation);
+    void publishPreparationReady(OrderPreparationDto.Ready readyPreparation);
 }

@@ -79,4 +79,13 @@ public class OrderDto {
             @NotBlank UUID restaurantId
 
     ) {}
+
+    @Builder
+    public record Ready(
+
+            @NotBlank UUID id,
+            @NotBlank UUID customerId,
+            @NotBlank UUID restaurantId
+
+    ) {}
 }

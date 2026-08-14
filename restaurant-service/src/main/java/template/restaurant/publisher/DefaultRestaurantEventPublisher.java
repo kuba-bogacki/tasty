@@ -1,9 +1,6 @@
 package template.restaurant.publisher;
 
-import common.events.preparation.PreparationAcceptedEvent;
-import common.events.preparation.PreparationInProgressEvent;
-import common.events.preparation.PreparationRejectedEvent;
-import common.events.preparation.PreparationWithdrawEvent;
+import common.events.preparation.*;
 import common.events.topic.Topics;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -73,5 +70,18 @@ public class DefaultRestaurantEventPublisher implements RestaurantEventPublisher
 
         kafkaTemplate.send(Topics.PREPARATION_IN_PROGRESS, startPreparation.orderId().toString(), event);
         log.info("Event 'preparation in progress' with id: {} successfully published.", event.eventId());
+    }
+
+    @Override
+    public void publishPreparationReady(OrderPreparationDto.Ready readyPreparation) {
+        final PreparationReadyEvent event = PreparationReadyEvent.builder()
+                .eventId(UUID.randomUUID())
+                .occurredAt(Instant.now())
+                .orderId(readyPreparation.orderId())
+                .restaurantId(readyPreparation.restaurantId())
+                .build();
+
+        kafkaTemplate.send(Topics.PREPARATION_READY, readyPreparation.orderId().toString(), event);
+        log.info("Event 'preparation ready' with id: {} successfully published.", event.eventId());
     }
 }

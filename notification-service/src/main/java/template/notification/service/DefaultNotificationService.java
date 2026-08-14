@@ -3,6 +3,7 @@ package template.notification.service;
 import common.events.delivery.DeliveryAssignedEvent;
 import common.events.order.OrderAcceptedEvent;
 import common.events.order.OrderCancelledEvent;
+import common.events.order.OrderReadyEvent;
 import common.events.payment.PaymentRefundedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +51,21 @@ public class DefaultNotificationService implements NotificationService {
 
         final Notification savedNotification = notificationRepository.save(notification);
         log.info("Order cancelled notification '{}' with id: {} successfully saved.", savedNotification.getContent(), savedNotification.getId());
+    }
+
+    @Override
+    public void handleOrderReady(OrderReadyEvent event) {
+        final Notification notification = Notification.builder()
+                .externalId(event.customerId())
+                .externalType(NotificationExternalType.CUSTOMER)
+                .type(NotificationType.PUSH)
+                .status(NotificationStatus.SENT)
+                .content("Order ready for pick up.")
+                .createdAt(Instant.now())
+                .build();
+
+        final Notification savedNotification = notificationRepository.save(notification);
+        log.info("Order ready for pick up notification '{}' with id: {} successfully saved.", savedNotification.getContent(), savedNotification.getId());
     }
 
     @Override

@@ -9,4 +9,5 @@ public interface OrderEventPublisher {
     void publishOrderCancelled(OrderDto.Cancel rejectedOrder);
     void publishOrderWithdraw(OrderDto.Withdraw rejectedOrder);
     void publishOrderPreparing(OrderDto.Prepare prepareOrder);
+    void publishOrderReadyForPickUp(OrderDto.Ready readyForPickUpOrder);
 }

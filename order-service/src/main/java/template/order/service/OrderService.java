@@ -1,10 +1,7 @@
 package template.order.service;
 
 import common.events.payment.PaymentFailedEvent;
-import common.events.preparation.PreparationAcceptedEvent;
-import common.events.preparation.PreparationInProgressEvent;
-import common.events.preparation.PreparationRejectedEvent;
-import common.events.preparation.PreparationWithdrawEvent;
+import common.events.preparation.*;
 import template.order.domain.dto.OrderDto;
 
 public interface OrderService {
@@ -17,5 +14,6 @@ public interface OrderService {
     void handlePreparationRejected(PreparationRejectedEvent event);
     void handlePreparationWithdraw(PreparationWithdrawEvent event);
     void handlePreparationInProgress(PreparationInProgressEvent event);
+    void handlePreparationReady(PreparationReadyEvent event);
     void handlePaymentFailed(PaymentFailedEvent event);
 }

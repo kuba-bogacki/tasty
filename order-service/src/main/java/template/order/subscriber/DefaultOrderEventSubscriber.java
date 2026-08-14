@@ -1,10 +1,7 @@
 package template.order.subscriber;
 
 import common.events.payment.PaymentFailedEvent;
-import common.events.preparation.PreparationAcceptedEvent;
-import common.events.preparation.PreparationInProgressEvent;
-import common.events.preparation.PreparationRejectedEvent;
-import common.events.preparation.PreparationWithdrawEvent;
+import common.events.preparation.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -39,6 +36,12 @@ public class DefaultOrderEventSubscriber implements OrderEventSubscriber {
     public void subscribePreparationInProgress(PreparationInProgressEvent event) {
         log.info("Event 'preparation in progress' with id: {} successfully subscribed.", event.eventId());
         orderService.handlePreparationInProgress(event);
+    }
+
+    @Override
+    public void subscribePreparationReady(PreparationReadyEvent event) {
+        log.info("Event 'preparation ready' with id: {} successfully subscribed.", event.eventId());
+        orderService.handlePreparationReady(event);
     }
 
     @Override

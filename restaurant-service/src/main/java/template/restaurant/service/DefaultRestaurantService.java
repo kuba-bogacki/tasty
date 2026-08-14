@@ -58,7 +58,7 @@ public class DefaultRestaurantService implements RestaurantService {
     @Override
     public void withdrawPreparation(RestaurantDto.Withdraw withdrawDto) {
         final OrderPreparation orderPreparation = findOrderPreparation(withdrawDto.orderId(), withdrawDto.restaurantId());
-        validatePreparationStatus(orderPreparation.getStatus(), "Withdraw preparation impossible due to forbidden preparation status: %s");
+        validatePreparationStatus(PreparationStatus.ACCEPTED, orderPreparation.getStatus(), "Withdraw preparation impossible due to forbidden preparation status: %s");
 
         orderPreparation.setStatus(PreparationStatus.WITHDRAW);
         final OrderPreparation updatedOrderPreparation = orderPreparationRepository.save(orderPreparation);
@@ -74,7 +74,7 @@ public class DefaultRestaurantService implements RestaurantService {
     @Override
     public void startPreparation(RestaurantDto.Prepare prepareDto) {
         final OrderPreparation orderPreparation = findOrderPreparation(prepareDto.orderId(), prepareDto.restaurantId());
-        validatePreparationStatus(orderPreparation.getStatus(), "Start preparation impossible due to forbidden preparation status: %s");
+        validatePreparationStatus(PreparationStatus.ACCEPTED, orderPreparation.getStatus(), "Start preparation impossible due to forbidden preparation status: %s");
 
         orderPreparation.setStatus(PreparationStatus.IN_PROGRESS);
         final OrderPreparation updatedOrderPreparation = orderPreparationRepository.save(orderPreparation);
@@ -85,6 +85,22 @@ public class DefaultRestaurantService implements RestaurantService {
                 .restaurantId(updatedOrderPreparation.getRestaurantId())
                 .build();
         restaurantEventPublisher.publishPreparationInProgress(startPreparation);
+    }
+
+    @Override
+    public void finishPreparation(RestaurantDto.Ready readyDto) {
+        final OrderPreparation orderPreparation = findOrderPreparation(readyDto.orderId(), readyDto.restaurantId());
+        validatePreparationStatus(PreparationStatus.IN_PROGRESS, orderPreparation.getStatus(), "Ready preparation impossible due to forbidden preparation status: %s");
+
+        orderPreparation.setStatus(PreparationStatus.READY);
+        final OrderPreparation updatedOrderPreparation = orderPreparationRepository.save(orderPreparation);
+        log.info("Updated 'Ready' order preparation with id {} successfully saved.", updatedOrderPreparation.getId());
+
+        final OrderPreparationDto.Ready readyPreparation = OrderPreparationDto.Ready.builder()
+                .orderId(updatedOrderPreparation.getOrderId())
+                .restaurantId(updatedOrderPreparation.getRestaurantId())
+                .build();
+        restaurantEventPublisher.publishPreparationReady(readyPreparation);
     }
 
     @Override
@@ -138,9 +154,9 @@ public class DefaultRestaurantService implements RestaurantService {
         return orderPreparation.get();
     }
 
-    private void validatePreparationStatus(PreparationStatus status, String message) {
-        if (PreparationStatus.ACCEPTED != status) {
-            throw new ForbiddenStatusPreparationException(String.format(message, status));
+    private void validatePreparationStatus(PreparationStatus requiredStatus, PreparationStatus currentStatus, String message) {
+        if (requiredStatus != currentStatus) {
+            throw new ForbiddenStatusPreparationException(String.format(message, currentStatus));
         }
     }
 }
