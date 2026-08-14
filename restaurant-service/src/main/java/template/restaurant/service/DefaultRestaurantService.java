@@ -11,7 +11,7 @@ import template.restaurant.domain.dto.OrderPreparationDto;
 import template.restaurant.domain.dto.RestaurantDto;
 import template.restaurant.domain.type.PreparationStatus;
 import template.restaurant.domain.type.RestaurantStatus;
-import template.restaurant.exception.WithdrawForbiddenException;
+import template.restaurant.exception.ForbiddenStatusPreparationException;
 import template.restaurant.publisher.RestaurantEventPublisher;
 import template.restaurant.repository.OrderPreparationRepository;
 import template.restaurant.repository.RestaurantRepository;
@@ -57,25 +57,34 @@ public class DefaultRestaurantService implements RestaurantService {
 
     @Override
     public void withdrawPreparation(RestaurantDto.Withdraw withdrawDto) {
-        final Optional<OrderPreparation> orderPreparation = orderPreparationRepository.findByOrderIdAndRestaurantId(withdrawDto.orderId(), withdrawDto.restaurantId());
-        if (orderPreparation.isEmpty()) {
-            throw new EntityNotFoundException(String.format("Couldn't find order preparation with order id equal: %s and restaurant id equal: %s", withdrawDto.orderId(), withdrawDto.restaurantId()));
-        }
+        final OrderPreparation orderPreparation = findOrderPreparation(withdrawDto.orderId(), withdrawDto.restaurantId());
+        validatePreparationStatus(orderPreparation.getStatus(), "Withdraw preparation impossible due to forbidden preparation status: %s");
 
-        final PreparationStatus currentStatus = orderPreparation.get().getStatus();
-        if (PreparationStatus.ACCEPTED != currentStatus) {
-            throw new WithdrawForbiddenException(String.format("Withdraw preparation impossible due to forbidden preparation status: %s", currentStatus));
-        }
-
-        orderPreparation.get().setStatus(PreparationStatus.WITHDRAW);
-        final OrderPreparation updatedOrderPreparation = orderPreparationRepository.save(orderPreparation.get());
-        log.info("Updated order preparation with id {} successfully saved.", updatedOrderPreparation.getId());
+        orderPreparation.setStatus(PreparationStatus.WITHDRAW);
+        final OrderPreparation updatedOrderPreparation = orderPreparationRepository.save(orderPreparation);
+        log.info("Updated 'Withdraw' order preparation with id {} successfully saved.", updatedOrderPreparation.getId());
 
         final OrderPreparationDto.Withdraw withdrawPreparation = OrderPreparationDto.Withdraw.builder()
                 .orderId(updatedOrderPreparation.getOrderId())
                 .restaurantId(updatedOrderPreparation.getRestaurantId())
                 .build();
         restaurantEventPublisher.publishPreparationWithdraw(withdrawPreparation);
+    }
+
+    @Override
+    public void startPreparation(RestaurantDto.Prepare prepareDto) {
+        final OrderPreparation orderPreparation = findOrderPreparation(prepareDto.orderId(), prepareDto.restaurantId());
+        validatePreparationStatus(orderPreparation.getStatus(), "Start preparation impossible due to forbidden preparation status: %s");
+
+        orderPreparation.setStatus(PreparationStatus.IN_PROGRESS);
+        final OrderPreparation updatedOrderPreparation = orderPreparationRepository.save(orderPreparation);
+        log.info("Updated 'In progress' order preparation with id {} successfully saved.", updatedOrderPreparation.getId());
+
+        final OrderPreparationDto.Prepare startPreparation = OrderPreparationDto.Prepare.builder()
+                .orderId(updatedOrderPreparation.getOrderId())
+                .restaurantId(updatedOrderPreparation.getRestaurantId())
+                .build();
+        restaurantEventPublisher.publishPreparationInProgress(startPreparation);
     }
 
     @Override
@@ -118,6 +127,20 @@ public class DefaultRestaurantService implements RestaurantService {
                     .restaurantId(savedAcceptedPreparation.getRestaurantId())
                     .build();
             restaurantEventPublisher.publishPreparationAccepted(acceptedPreparation);
+        }
+    }
+
+    private OrderPreparation findOrderPreparation(UUID orderId, UUID restaurantId) {
+        final Optional<OrderPreparation> orderPreparation = orderPreparationRepository.findByOrderIdAndRestaurantId(orderId, restaurantId);
+        if (orderPreparation.isEmpty()) {
+            throw new EntityNotFoundException(String.format("Couldn't find order preparation with order id equal: %s and restaurant id equal: %s", orderId, restaurantId));
+        }
+        return orderPreparation.get();
+    }
+
+    private void validatePreparationStatus(PreparationStatus status, String message) {
+        if (PreparationStatus.ACCEPTED != status) {
+            throw new ForbiddenStatusPreparationException(String.format(message, status));
         }
     }
 }

@@ -12,6 +12,7 @@ public final class Topics {
     public static final String ORDER_REJECTED = "order-rejected";
     public static final String ORDER_CANCELLED = "order-cancelled";
     public static final String ORDER_WITHDRAW = "order-withdraw";
+    public static final String ORDER_PREPARING = "order-preparing";
     public static final String ORDER_DELIVERED = "order-delivered";
     public static final String PAYMENT_COMPLETED = "payment-completed";
     public static final String PAYMENT_FAILED = "payment-failed";
@@ -19,7 +20,8 @@ public final class Topics {
     public static final String PREPARATION_ACCEPTED = "preparation-accepted";
     public static final String PREPARATION_REJECTED = "preparation-rejected";
     public static final String PREPARATION_WITHDRAW = "preparation-withdraw";
-    public static final String COURIER_ASSIGNED = "courier-assigned";
+    public static final String PREPARATION_IN_PROGRESS = "preparation-in-progress";
+    public static final String DELIVERY_ASSIGNED = "delivery-assigned";
 
     // Group ids
     public static final String TEMPLATE_PAYMENT_SERVICE = "template-payment-service";

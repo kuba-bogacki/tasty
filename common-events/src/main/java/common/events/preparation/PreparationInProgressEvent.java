@@ -1,16 +1,18 @@
-package common.events.deliver;
+package common.events.preparation;
 
 import common.events.DomainEvent;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 
 import java.time.Instant;
 import java.util.UUID;
 
-public record OrderPickedUpEvent(
+@Builder
+public record PreparationInProgressEvent(
 
         @NotBlank UUID eventId,
         @NotBlank Instant occurredAt,
         @NotBlank UUID orderId,
-        @NotBlank UUID courierId
+        @NotBlank UUID restaurantId
 
 ) implements DomainEvent {}

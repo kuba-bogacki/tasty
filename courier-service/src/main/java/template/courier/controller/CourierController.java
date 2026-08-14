@@ -19,8 +19,8 @@ public class CourierController {
     private final CourierService courierService;
 
     @PostMapping(value = "/create")
-    public ResponseEntity<?> createNewCourier(@Valid @RequestBody CourierDto courierDto) {
-        courierService.createNewCourier(courierDto);
+    public ResponseEntity<?> createNewCourier(@Valid @RequestBody CourierDto.Create createDto) {
+        courierService.createNewCourier(createDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

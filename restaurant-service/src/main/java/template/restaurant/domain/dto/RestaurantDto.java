@@ -31,4 +31,12 @@ public class RestaurantDto {
             @NotBlank UUID restaurantId
 
     ) {}
+
+    @Builder
+    public record Prepare(
+
+            @NotBlank UUID orderId,
+            @NotBlank UUID restaurantId
+
+    ) {}
 }

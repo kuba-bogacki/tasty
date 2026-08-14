@@ -14,8 +14,8 @@ public class OrderDto {
     @Builder
     public record Create(
 
-            @NotBlank String customerId,
-            @NotBlank String restaurantId,
+            @NotBlank UUID customerId,
+            @NotBlank UUID restaurantId,
             @NotNull DeliveryAddressDto deliveryAddress,
             @NotEmpty List<OrderItemDto> items,
             @NotBlank String paymentMethod
@@ -25,7 +25,7 @@ public class OrderDto {
     @Builder
     public record Publish(
 
-            @NotBlank UUID orderId,
+            @NotBlank UUID id,
             @NotBlank UUID customerId,
             @NotBlank UUID restaurantId,
             @NotBlank String paymentMethod,
@@ -36,7 +36,7 @@ public class OrderDto {
     @Builder
     public record Accept(
 
-            @NotBlank UUID orderId,
+            @NotBlank UUID id,
             @NotBlank UUID customerId,
             @NotBlank UUID restaurantId
 
@@ -45,7 +45,7 @@ public class OrderDto {
     @Builder
     public record Reject(
 
-            @NotBlank UUID orderId,
+            @NotBlank UUID id,
             @NotBlank UUID customerId,
             @NotBlank UUID restaurantId,
             @NotBlank String reason
@@ -55,7 +55,7 @@ public class OrderDto {
     @Builder
     public record Cancel(
 
-            @NotBlank UUID orderId,
+            @NotBlank UUID id,
             @NotBlank UUID customerId,
             @NotBlank UUID restaurantId,
             @NotBlank String reason
@@ -65,7 +65,16 @@ public class OrderDto {
     @Builder
     public record Withdraw(
 
-            @NotBlank UUID orderId,
+            @NotBlank UUID id,
+            @NotBlank UUID customerId,
+            @NotBlank UUID restaurantId
+
+    ) {}
+
+    @Builder
+    public record Prepare(
+
+            @NotBlank UUID id,
             @NotBlank UUID customerId,
             @NotBlank UUID restaurantId
 

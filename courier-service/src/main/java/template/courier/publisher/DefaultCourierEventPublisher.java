@@ -1,12 +1,12 @@
 package template.courier.publisher;
 
-import common.events.deliver.CourierAssignedEvent;
+import common.events.delivery.DeliveryAssignedEvent;
 import common.events.topic.Topics;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-import template.courier.domain.Delivery;
+import template.courier.domain.dto.DeliveryDto;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -19,15 +19,16 @@ public class DefaultCourierEventPublisher implements CourierEventPublisher {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Override
-    public void publishCourierAssigned(Delivery delivery) {
-        final CourierAssignedEvent event = CourierAssignedEvent.builder()
+    public void publishDeliveryAssigned(DeliveryDto.Assigned assignedDelivery) {
+        final DeliveryAssignedEvent event = DeliveryAssignedEvent.builder()
                 .eventId(UUID.randomUUID())
                 .occurredAt(Instant.now())
-                .courierId(delivery.getCourierId())
-                .orderId(delivery.getOrderId())
+                .deliveryId(assignedDelivery.id())
+                .orderId(assignedDelivery.orderId())
+                .courierId(assignedDelivery.courierId())
                 .build();
 
-        kafkaTemplate.send(Topics.COURIER_ASSIGNED, delivery.getId().toString(), event);
-        log.info("Event 'courier assigned' with id: {} successfully published.", event.eventId());
+        kafkaTemplate.send(Topics.DELIVERY_ASSIGNED, assignedDelivery.id().toString(), event);
+        log.info("Event 'delivery assigned' with id: {} successfully published.", event.eventId());
     }
 }

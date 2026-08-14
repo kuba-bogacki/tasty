@@ -2,6 +2,7 @@ package template.order.subscriber;
 
 import common.events.payment.PaymentFailedEvent;
 import common.events.preparation.PreparationAcceptedEvent;
+import common.events.preparation.PreparationInProgressEvent;
 import common.events.preparation.PreparationRejectedEvent;
 import common.events.preparation.PreparationWithdrawEvent;
 import common.events.topic.Topics;
@@ -17,6 +18,9 @@ public interface OrderEventSubscriber {
 
     @KafkaListener(topics = Topics.PREPARATION_WITHDRAW, groupId = Topics.TEMPLATE_ORDER_SERVICE)
     void subscribePreparationWithdraw(PreparationWithdrawEvent event);
+
+    @KafkaListener(topics = Topics.PREPARATION_IN_PROGRESS, groupId = Topics.TEMPLATE_ORDER_SERVICE)
+    void subscribePreparationInProgress(PreparationInProgressEvent event);
 
     @KafkaListener(topics = Topics.PAYMENT_FAILED, groupId = Topics.TEMPLATE_ORDER_SERVICE)
     void subscribePaymentFailed(PaymentFailedEvent event);

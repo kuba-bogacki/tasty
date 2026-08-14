@@ -1,6 +1,6 @@
 package template.notification.subscriber;
 
-import common.events.deliver.CourierAssignedEvent;
+import common.events.delivery.DeliveryAssignedEvent;
 import common.events.order.OrderAcceptedEvent;
 import common.events.order.OrderCancelledEvent;
 import common.events.payment.PaymentRefundedEvent;
@@ -29,9 +29,9 @@ public class DefaultNotificationEventSubscriber implements NotificationEventSubs
     }
 
     @Override
-    public void subscribeCourierAssigned(CourierAssignedEvent event) {
-        log.info("Event 'courier assigned' with id: {} successfully subscribed.", event.eventId());
-        notificationService.handleCourierAssigned(event);
+    public void subscribeDeliveryAssigned(DeliveryAssignedEvent event) {
+        log.info("Event 'delivery assigned' with id: {} successfully subscribed.", event.eventId());
+        notificationService.handleDeliveryAssigned(event);
     }
 
     @Override

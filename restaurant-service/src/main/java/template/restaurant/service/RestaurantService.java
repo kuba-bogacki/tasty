@@ -9,6 +9,7 @@ public interface RestaurantService {
     void createRestaurant(RestaurantDto.Create createDto);
     void updateRestaurantStatus(RestaurantDto.Update updateDto);
     void withdrawPreparation(RestaurantDto.Withdraw withdrawDto);
+    void startPreparation(RestaurantDto.Prepare prepareDto);
 
     // Events handlers
     void handlePaymentCompleted(PaymentCompletedEvent event);

@@ -1,6 +1,6 @@
 package template.notification.service;
 
-import common.events.deliver.CourierAssignedEvent;
+import common.events.delivery.DeliveryAssignedEvent;
 import common.events.order.OrderAcceptedEvent;
 import common.events.order.OrderCancelledEvent;
 import common.events.payment.PaymentRefundedEvent;
@@ -68,13 +68,13 @@ public class DefaultNotificationService implements NotificationService {
     }
 
     @Override
-    public void handleCourierAssigned(CourierAssignedEvent event) {
+    public void handleDeliveryAssigned(DeliveryAssignedEvent event) {
         final Notification notification = Notification.builder()
-                .externalId(event.courierId())
+                .externalId(event.deliveryId())
                 .externalType(NotificationExternalType.DELIVERY)
                 .type(NotificationType.PUSH)
                 .status(NotificationStatus.SENT)
-                .content("Courier successfully assigned")
+                .content("Delivery successfully assigned to courier")
                 .createdAt(Instant.now())
                 .build();
 

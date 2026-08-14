@@ -1,8 +1,8 @@
 package template.courier.publisher;
 
-import template.courier.domain.Delivery;
+import template.courier.domain.dto.DeliveryDto;
 
 public interface CourierEventPublisher {
 
-    void publishCourierAssigned(Delivery delivery);
+    void publishDeliveryAssigned(DeliveryDto.Assigned assignedDelivery);
 }

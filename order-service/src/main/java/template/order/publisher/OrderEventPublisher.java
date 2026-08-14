@@ -8,4 +8,5 @@ public interface OrderEventPublisher {
     void publishOrderRejected(OrderDto.Reject rejectOrder);
     void publishOrderCancelled(OrderDto.Cancel rejectedOrder);
     void publishOrderWithdraw(OrderDto.Withdraw rejectedOrder);
+    void publishOrderPreparing(OrderDto.Prepare prepareOrder);
 }

@@ -32,4 +32,10 @@ public class RestaurantController {
         restaurantService.withdrawPreparation(withdrawDto);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
+
+    @PatchMapping(value = "/prepare")
+    public ResponseEntity<?> startPreparation(@Valid @RequestBody RestaurantDto.Prepare prepareDto) {
+        restaurantService.startPreparation(prepareDto);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
 }

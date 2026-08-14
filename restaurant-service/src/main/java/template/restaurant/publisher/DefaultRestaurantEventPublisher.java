@@ -1,6 +1,7 @@
 package template.restaurant.publisher;
 
 import common.events.preparation.PreparationAcceptedEvent;
+import common.events.preparation.PreparationInProgressEvent;
 import common.events.preparation.PreparationRejectedEvent;
 import common.events.preparation.PreparationWithdrawEvent;
 import common.events.topic.Topics;
@@ -59,5 +60,18 @@ public class DefaultRestaurantEventPublisher implements RestaurantEventPublisher
 
         kafkaTemplate.send(Topics.PREPARATION_WITHDRAW, withdrawPreparation.orderId().toString(), event);
         log.info("Event 'preparation withdraw' with id: {} successfully published.", event.eventId());
+    }
+
+    @Override
+    public void publishPreparationInProgress(OrderPreparationDto.Prepare startPreparation) {
+        final PreparationInProgressEvent event = PreparationInProgressEvent.builder()
+                .eventId(UUID.randomUUID())
+                .occurredAt(Instant.now())
+                .orderId(startPreparation.orderId())
+                .restaurantId(startPreparation.restaurantId())
+                .build();
+
+        kafkaTemplate.send(Topics.PREPARATION_IN_PROGRESS, startPreparation.orderId().toString(), event);
+        log.info("Event 'preparation in progress' with id: {} successfully published.", event.eventId());
     }
 }

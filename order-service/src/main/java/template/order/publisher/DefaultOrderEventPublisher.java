@@ -23,14 +23,14 @@ public class DefaultOrderEventPublisher implements OrderEventPublisher {
         final OrderCreatedEvent event = OrderCreatedEvent.builder()
                 .eventId(UUID.randomUUID())
                 .occurredAt(Instant.now())
-                .orderId(publishOrder.orderId())
+                .orderId(publishOrder.id())
                 .customerId(publishOrder.customerId())
                 .restaurantId(publishOrder.restaurantId())
                 .paymentMethod(publishOrder.paymentMethod())
                 .totalAmount(publishOrder.totalAmount())
                 .build();
 
-        kafkaTemplate.send(Topics.ORDER_CREATED, publishOrder.orderId().toString(), event);
+        kafkaTemplate.send(Topics.ORDER_CREATED, publishOrder.id().toString(), event);
         log.info("Event 'order created' with id: {} successfully published.", event.eventId());
     }
 
@@ -39,12 +39,12 @@ public class DefaultOrderEventPublisher implements OrderEventPublisher {
         final OrderAcceptedEvent event = OrderAcceptedEvent.builder()
                 .eventId(UUID.randomUUID())
                 .occurredAt(Instant.now())
-                .orderId(acceptOrder.orderId())
+                .orderId(acceptOrder.id())
                 .customerId(acceptOrder.customerId())
                 .restaurantId(acceptOrder.restaurantId())
                 .build();
 
-        kafkaTemplate.send(Topics.ORDER_ACCEPTED, acceptOrder.orderId().toString(), event);
+        kafkaTemplate.send(Topics.ORDER_ACCEPTED, acceptOrder.id().toString(), event);
         log.info("Event 'order accepted' with id: {} successfully published.", event.eventId());
     }
 
@@ -53,12 +53,12 @@ public class DefaultOrderEventPublisher implements OrderEventPublisher {
         final OrderRejectedEvent event = OrderRejectedEvent.builder()
                 .eventId(UUID.randomUUID())
                 .occurredAt(Instant.now())
-                .orderId(rejectOrder.orderId())
+                .orderId(rejectOrder.id())
                 .restaurantId(rejectOrder.restaurantId())
                 .reason(rejectOrder.reason())
                 .build();
 
-        kafkaTemplate.send(Topics.ORDER_REJECTED, rejectOrder.orderId().toString(), event);
+        kafkaTemplate.send(Topics.ORDER_REJECTED, rejectOrder.id().toString(), event);
         log.info("Event 'order rejected' with id: {} successfully published.", event.eventId());
     }
 
@@ -67,12 +67,12 @@ public class DefaultOrderEventPublisher implements OrderEventPublisher {
         final OrderCancelledEvent event = OrderCancelledEvent.builder()
                 .eventId(UUID.randomUUID())
                 .occurredAt(Instant.now())
-                .orderId(cancelOrder.orderId())
+                .orderId(cancelOrder.id())
                 .customerId(cancelOrder.customerId())
                 .restaurantId(cancelOrder.restaurantId())
                 .build();
 
-        kafkaTemplate.send(Topics.ORDER_CANCELLED, cancelOrder.orderId().toString(), event);
+        kafkaTemplate.send(Topics.ORDER_CANCELLED, cancelOrder.id().toString(), event);
         log.info("Event 'order cancelled' with id: {} successfully published.", event.eventId());
     }
 
@@ -81,12 +81,25 @@ public class DefaultOrderEventPublisher implements OrderEventPublisher {
         final OrderWithdrawEvent event = OrderWithdrawEvent.builder()
                 .eventId(UUID.randomUUID())
                 .occurredAt(Instant.now())
-                .orderId(rejectedOrder.orderId())
+                .orderId(rejectedOrder.id())
                 .customerId(rejectedOrder.customerId())
                 .restaurantId(rejectedOrder.restaurantId())
                 .build();
 
-        kafkaTemplate.send(Topics.ORDER_WITHDRAW, rejectedOrder.orderId().toString(), event);
+        kafkaTemplate.send(Topics.ORDER_WITHDRAW, rejectedOrder.id().toString(), event);
         log.info("Event 'order withdraw' with id: {} successfully published.", event.eventId());
+    }
+
+    @Override
+    public void publishOrderPreparing(OrderDto.Prepare prepareOrder) {
+        final OrderPreparingEvent event = OrderPreparingEvent.builder()
+                .eventId(UUID.randomUUID())
+                .occurredAt(Instant.now())
+                .orderId(prepareOrder.id())
+                .restaurantId(prepareOrder.restaurantId())
+                .build();
+
+        kafkaTemplate.send(Topics.ORDER_PREPARING, prepareOrder.id().toString(), event);
+        log.info("Event 'order preparing' with id: {} successfully published.", event.eventId());
     }
 }

@@ -1,4 +1,4 @@
-package common.events.deliver;
+package common.events.delivery;
 
 import common.events.DomainEvent;
 import jakarta.validation.constraints.NotBlank;
@@ -8,10 +8,11 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Builder
-public record CourierAssignedEvent(
+public record DeliveryAssignedEvent(
 
         @NotBlank UUID eventId,
         @NotBlank Instant occurredAt,
+        @NotBlank UUID deliveryId,
         @NotBlank UUID orderId,
         @NotBlank UUID courierId
 

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import template.courier.domain.Courier;
 import template.courier.domain.dto.CourierDto;
 import template.courier.domain.type.CourierStatus;
-import template.courier.exception.CourierException;
+import template.courier.exception.CourierStatusException;
 import template.courier.repository.CourierRepository;
 import template.courier.service.CourierService;
 
@@ -22,9 +22,9 @@ public class DefaultCourierService implements CourierService {
     private final CourierRepository courierRepository;
 
     @Override
-    public void createNewCourier(CourierDto courierDto) {
+    public void createNewCourier(CourierDto.Create createDto) {
         final Courier courier = Courier.builder()
-                .name(courierDto.name())
+                .name(createDto.name())
                 .status(CourierStatus.AVAILABLE)
                 .build();
         final Courier savedCourier = courierRepository.save(courier);
@@ -32,24 +32,29 @@ public class DefaultCourierService implements CourierService {
     }
 
     @Override
-    public UUID getAvailableCourier() {
-        final Optional<Courier> courier = Optional.ofNullable(courierRepository.getFirstByStatusEquals(CourierStatus.AVAILABLE));
-        return courier
-                .orElseThrow(() -> new CourierException("No one courier is available."))
-                .getId();
+    public Optional<CourierDto.Find> findAvailableCourier() {
+        final Optional<Courier> courier = courierRepository.getFirstByStatusEquals(CourierStatus.AVAILABLE);
+        if (courier.isEmpty()) {
+            return Optional.empty();
+        }
+        final CourierDto.Find availableCourier = CourierDto.Find.builder()
+                .id(courier.get().getId())
+                .name(courier.get().getName())
+                .build();
+        return Optional.of(availableCourier);
     }
 
     @Override
-    public void assignCourierToDelivery(UUID courierId) {
-        final Optional<Courier> courier = courierRepository.findById(courierId);
+    public void assignCourierToDelivery(CourierDto.Assign assignDto) {
+        final Optional<Courier> courier = courierRepository.findById(assignDto.id());
         if (courier.isEmpty()) {
-            throw new CourierException(String.format("Couldn't find courier with provided id: %s.", courierId));
+            throw new CourierStatusException(String.format("Couldn't find courier with provided id: %s.", assignDto.id()));
         }
-        final Courier updatedCourier = courier.get().toBuilder()
+        final Courier assignCourier = courier.get().toBuilder()
                 .status(CourierStatus.BUSY)
                 .assignedAt(Instant.now())
                 .build();
-        courierRepository.save(updatedCourier);
-        log.info("Courier with id {} successfully updated.", courier.get().getId());
+        final Courier updatedCourier = courierRepository.save(assignCourier);
+        log.info("Updated 'Busy' courier with id {} successfully saved.", updatedCourier.getId());
     }
 }

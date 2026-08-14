@@ -2,6 +2,7 @@ package template.order.subscriber;
 
 import common.events.payment.PaymentFailedEvent;
 import common.events.preparation.PreparationAcceptedEvent;
+import common.events.preparation.PreparationInProgressEvent;
 import common.events.preparation.PreparationRejectedEvent;
 import common.events.preparation.PreparationWithdrawEvent;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,12 @@ public class DefaultOrderEventSubscriber implements OrderEventSubscriber {
     public void subscribePreparationWithdraw(PreparationWithdrawEvent event) {
         log.info("Event 'preparation withdraw' with id: {} successfully subscribed.", event.eventId());
         orderService.handlePreparationWithdraw(event);
+    }
+
+    @Override
+    public void subscribePreparationInProgress(PreparationInProgressEvent event) {
+        log.info("Event 'preparation in progress' with id: {} successfully subscribed.", event.eventId());
+        orderService.handlePreparationInProgress(event);
     }
 
     @Override
