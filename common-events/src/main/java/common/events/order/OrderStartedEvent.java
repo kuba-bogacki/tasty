@@ -8,7 +8,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Builder
-public record OrderPreparingEvent(
+public record OrderStartedEvent(
 
         @NotBlank UUID eventId,
         @NotBlank Instant occurredAt,

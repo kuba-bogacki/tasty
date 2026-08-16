@@ -22,6 +22,18 @@ public class DefaultCourierService implements CourierService {
     private final CourierRepository courierRepository;
 
     @Override
+    public void releaseCourier(UUID courierId) {
+        final Courier courier = findCourier(courierId);
+        final Courier releaseCourier = courier.toBuilder()
+                .status(CourierStatus.AVAILABLE)
+                .orderId(null)
+                .assignedAt(null)
+                .build();
+        final Courier updatedCourier = courierRepository.save(releaseCourier);
+        log.info("Released courier with id {} successfully saved.", updatedCourier.getId());
+    }
+
+    @Override
     public void createNewCourier(CourierDto.Create createDto) {
         final Courier courier = Courier.builder()
                 .name(createDto.name())
@@ -46,15 +58,20 @@ public class DefaultCourierService implements CourierService {
 
     @Override
     public void assignCourierToDelivery(CourierDto.Assign assignDto) {
-        final Optional<Courier> courier = courierRepository.findById(assignDto.id());
-        if (courier.isEmpty()) {
-            throw new CourierStatusException(String.format("Couldn't find courier with provided id: %s.", assignDto.id()));
-        }
-        final Courier assignCourier = courier.get().toBuilder()
+        final Courier courier = findCourier(assignDto.id());
+        final Courier assignCourier = courier.toBuilder()
                 .status(CourierStatus.BUSY)
                 .assignedAt(Instant.now())
                 .build();
         final Courier updatedCourier = courierRepository.save(assignCourier);
         log.info("Updated 'Busy' courier with id {} successfully saved.", updatedCourier.getId());
+    }
+
+    private Courier findCourier(UUID courierId) {
+        final Optional<Courier> courier = courierRepository.findById(courierId);
+        if (courier.isEmpty()) {
+            throw new CourierStatusException(String.format("Couldn't find courier with provided id: %s.", courierId));
+        }
+        return courier.get();
     }
 }

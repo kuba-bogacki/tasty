@@ -6,7 +6,7 @@ public interface RestaurantEventPublisher {
 
     void publishPreparationAccepted(OrderPreparationDto.Accepted acceptedPreparation);
     void publishPreparationRejected(OrderPreparationDto.Rejected rejectedPreparation);
-    void publishPreparationWithdraw(OrderPreparationDto.Withdraw withdrawPreparation);
-    void publishPreparationInProgress(OrderPreparationDto.Prepare startPreparation);
-    void publishPreparationReady(OrderPreparationDto.Ready readyPreparation);
+    void publishPreparationWithdrew(OrderPreparationDto.Withdraw withdrawPreparation);
+    void publishPreparationStarted(OrderPreparationDto.Start startPreparation);
+    void publishPreparationCompleted(OrderPreparationDto.Complete completePreparation);
 }

@@ -10,11 +10,11 @@ public enum OrderStatus {
     CREATED("Created"),
     ACCEPTED("Accepted"),
     REJECTED("Rejected"),
-    PREPARING("Preparing"),
+    STARTED("Started"),
     CANCELLED("Cancelled"),
-    WITHDRAW("Withdraw"),
-    READY_FOR_PICKUP("Ready for pickup"),
-    IN_DELIVERY("In delivery"),
+    WITHDREW("Withdrew"),
+    PREPARED("Prepared"),
+    SENT("Sent"),
     DELIVERED("Delivered");
 
     private final String description;

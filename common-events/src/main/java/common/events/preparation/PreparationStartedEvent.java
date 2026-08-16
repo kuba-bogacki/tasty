@@ -1,4 +1,4 @@
-package common.events.order;
+package common.events.preparation;
 
 import common.events.DomainEvent;
 import jakarta.validation.constraints.NotBlank;
@@ -8,12 +8,11 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Builder
-public record OrderDeliveredEvent(
+public record PreparationStartedEvent(
 
         @NotBlank UUID eventId,
         @NotBlank Instant occurredAt,
         @NotBlank UUID orderId,
-        @NotBlank UUID courierId,
         @NotBlank UUID restaurantId
 
 ) implements DomainEvent {}

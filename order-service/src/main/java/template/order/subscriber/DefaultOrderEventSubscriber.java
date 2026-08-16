@@ -1,5 +1,6 @@
 package template.order.subscriber;
 
+import common.events.delivery.DeliverySentEvent;
 import common.events.payment.PaymentFailedEvent;
 import common.events.preparation.*;
 import lombok.RequiredArgsConstructor;
@@ -27,26 +28,32 @@ public class DefaultOrderEventSubscriber implements OrderEventSubscriber {
     }
 
     @Override
-    public void subscribePreparationWithdraw(PreparationWithdrawEvent event) {
-        log.info("Event 'preparation withdraw' with id: {} successfully subscribed.", event.eventId());
-        orderService.handlePreparationWithdraw(event);
+    public void subscribePreparationWithdrew(PreparationWithdrewEvent event) {
+        log.info("Event 'preparation withdrew' with id: {} successfully subscribed.", event.eventId());
+        orderService.handlePreparationWithdrew(event);
     }
 
     @Override
-    public void subscribePreparationInProgress(PreparationInProgressEvent event) {
-        log.info("Event 'preparation in progress' with id: {} successfully subscribed.", event.eventId());
-        orderService.handlePreparationInProgress(event);
+    public void subscribePreparationStarted(PreparationStartedEvent event) {
+        log.info("Event 'preparation started' with id: {} successfully subscribed.", event.eventId());
+        orderService.handlePreparationStarted(event);
     }
 
     @Override
-    public void subscribePreparationReady(PreparationReadyEvent event) {
-        log.info("Event 'preparation ready' with id: {} successfully subscribed.", event.eventId());
-        orderService.handlePreparationReady(event);
+    public void subscribePreparationCompleted(PreparationCompletedEvent event) {
+        log.info("Event 'preparation completed' with id: {} successfully subscribed.", event.eventId());
+        orderService.handlePreparationCompleted(event);
     }
 
     @Override
     public void subscribePaymentFailed(PaymentFailedEvent event) {
         log.info("Event 'payment failed' with id: {} successfully subscribed.", event.eventId());
         orderService.handlePaymentFailed(event);
+    }
+
+    @Override
+    public void subscribeDeliverySent(DeliverySentEvent event) {
+        log.info("Event 'delivery sent' with id: {} successfully subscribed.", event.eventId());
+        orderService.handleDeliverySent(event);
     }
 }

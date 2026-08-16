@@ -1,9 +1,7 @@
 package template.notification.service;
 
 import common.events.delivery.DeliveryAssignedEvent;
-import common.events.order.OrderAcceptedEvent;
-import common.events.order.OrderCancelledEvent;
-import common.events.order.OrderReadyEvent;
+import common.events.order.*;
 import common.events.payment.PaymentRefundedEvent;
 
 public interface NotificationService {
@@ -11,7 +9,9 @@ public interface NotificationService {
     // Events handlers
     void handleOrderAccepted(OrderAcceptedEvent event);
     void handleOrderCancelled(OrderCancelledEvent event);
-    void handleOrderReady(OrderReadyEvent event);
+    void handleOrderPrepared(OrderPreparedEvent event);
     void handlePaymentRefunded(PaymentRefundedEvent event);
     void handleDeliveryAssigned(DeliveryAssignedEvent event);
+    void handleOrderSent(OrderSentEvent event);
+    void handleOrderDelivered(OrderDeliveredEvent event);
 }

@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 public enum DeliveryStatus {
 
     ASSIGNED("Assigned"),
-    ON_THE_WAY("On the way"),
+    SENT("Sent"),
     DELIVERED("Delivered");
 
     private final String description;

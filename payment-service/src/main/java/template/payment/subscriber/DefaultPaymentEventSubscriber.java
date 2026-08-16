@@ -2,7 +2,7 @@ package template.payment.subscriber;
 
 import common.events.order.OrderCreatedEvent;
 import common.events.order.OrderRejectedEvent;
-import common.events.order.OrderWithdrawEvent;
+import common.events.order.OrderWithdrewEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -28,8 +28,8 @@ public class DefaultPaymentEventSubscriber implements PaymentEventSubscriber {
     }
 
     @Override
-    public void subscribeOrderWithdraw(OrderWithdrawEvent event) {
-        log.info("Event 'order withdraw' with id: {} successfully subscribed.", event.eventId());
-        paymentService.handleOrderWithdraw(event);
+    public void subscribeOrderWithdrew(OrderWithdrewEvent event) {
+        log.info("Event 'order withdrew' with id: {} successfully subscribed.", event.eventId());
+        paymentService.handleOrderWithdrew(event);
     }
 }

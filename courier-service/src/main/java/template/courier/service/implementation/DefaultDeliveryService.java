@@ -1,6 +1,8 @@
 package template.courier.service.implementation;
 
-import common.events.order.OrderPreparingEvent;
+import common.events.order.OrderDeliveredEvent;
+import common.events.order.OrderStartedEvent;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import template.courier.repository.DeliveryRepository;
 import template.courier.service.CourierService;
 import template.courier.service.DeliveryService;
 
+import java.time.Instant;
 import java.util.Optional;
 
 @Slf4j
@@ -28,7 +31,26 @@ public class DefaultDeliveryService implements DeliveryService {
 
     @Override
     @Transactional
-    public void handleOrderPreparing(OrderPreparingEvent event) {
+    public void sendDelivery(DeliveryDto.Send sendDto) {
+        final Optional<Delivery> delivery = deliveryRepository.findById(sendDto.id());
+        if (delivery.isEmpty()) {
+            throw new EntityNotFoundException(String.format("Couldn't find delivery with id equal: %s", sendDto.id()));
+        }
+
+        delivery.get().setStatus(DeliveryStatus.SENT);
+        final Delivery savedDelivery = deliveryRepository.save(delivery.get());
+        log.info("Delivery with 'Sent' status and with id {} successfully updated.", savedDelivery.getId());
+
+        final DeliveryDto.Send sendDelivery = DeliveryDto.Send.builder()
+                .id(savedDelivery.getId())
+                .orderId(savedDelivery.getOrderId())
+                .build();
+        courierEventPublisher.publishDeliverySent(sendDelivery);
+    }
+
+    @Override
+    @Transactional
+    public void handleOrderStarted(OrderStartedEvent event) {
         final Optional<CourierDto.Find> courier = courierService.findAvailableCourier();
         if (courier.isEmpty()) {
             throw new CourierStatusException("No one courier is available.");
@@ -48,11 +70,27 @@ public class DefaultDeliveryService implements DeliveryService {
         final Delivery savedDelivery = deliveryRepository.save(delivery);
         log.info("New delivery with id {} successfully saved.", savedDelivery.getId());
 
-        final DeliveryDto.Assigned assignedDelivery = DeliveryDto.Assigned.builder()
+        final DeliveryDto.Assign assignDelivery = DeliveryDto.Assign.builder()
                 .id(savedDelivery.getId())
                 .orderId(savedDelivery.getOrderId())
                 .courierId(savedDelivery.getCourierId())
                 .build();
-        courierEventPublisher.publishDeliveryAssigned(assignedDelivery);
+        courierEventPublisher.publishDeliveryAssigned(assignDelivery);
+    }
+
+    @Override
+    @Transactional
+    public void handleOrderDelivered(OrderDeliveredEvent event) {
+        final Optional<Delivery> delivery = deliveryRepository.findByOrderId(event.orderId());
+        if (delivery.isEmpty()) {
+            throw new EntityNotFoundException(String.format("Couldn't find delivery with assigned order id equal: %s", event.orderId()));
+        }
+
+        delivery.get().setStatus(DeliveryStatus.DELIVERED);
+        delivery.get().setDeliveredAt(Instant.now());
+        final Delivery savedDelivery = deliveryRepository.save(delivery.get());
+        log.info("Delivery with 'Delivered' status and with id {} successfully updated.", savedDelivery.getId());
+
+        courierService.releaseCourier(event.courierId());
     }
 }

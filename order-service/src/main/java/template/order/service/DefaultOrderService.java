@@ -1,5 +1,6 @@
 package template.order.service;
 
+import common.events.delivery.DeliverySentEvent;
 import common.events.payment.PaymentFailedEvent;
 import common.events.preparation.*;
 import jakarta.persistence.EntityNotFoundException;
@@ -57,6 +58,22 @@ public class DefaultOrderService implements OrderService {
     }
 
     @Override
+    public void deliverOrder(OrderDto.Deliver createDto) {
+        final Order order = findOrder(createDto.id());
+        order.setStatus(OrderStatus.DELIVERED);
+
+        final Order savedOrder = orderRepository.save(order);
+        log.info("Order with 'Delivered' status and with id {} successfully updated.", savedOrder.getId());
+
+        final OrderDto.Deliver deliverOrder = OrderDto.Deliver.builder()
+                .id(savedOrder.getId())
+                .courierId(createDto.courierId())
+                .restaurantId(savedOrder.getRestaurantId())
+                .build();
+        orderEventPublisher.publishOrderDelivered(deliverOrder);
+    }
+
+    @Override
     public void handlePreparationAccepted(PreparationAcceptedEvent event) {
         final Order order = findOrder(event.orderId());
         order.setStatus(OrderStatus.ACCEPTED);
@@ -91,62 +108,59 @@ public class DefaultOrderService implements OrderService {
     }
 
     @Override
-    public void handlePreparationWithdraw(PreparationWithdrawEvent event) {
+    public void handlePreparationWithdrew(PreparationWithdrewEvent event) {
         final Order order = findOrder(event.orderId());
-        order.setStatus(OrderStatus.WITHDRAW);
+        order.setStatus(OrderStatus.WITHDREW);
 
         final Order savedOrder = orderRepository.save(order);
-        log.info("Order with 'Withdraw' status and with id {} successfully updated.", savedOrder.getId());
+        log.info("Order with 'Withdrew' status and with id {} successfully updated.", savedOrder.getId());
 
         final OrderDto.Withdraw withdrawOrder = OrderDto.Withdraw.builder()
                 .id(savedOrder.getId())
                 .customerId(savedOrder.getCustomerId())
                 .restaurantId(savedOrder.getRestaurantId())
                 .build();
-        orderEventPublisher.publishOrderWithdraw(withdrawOrder);
+        orderEventPublisher.publishOrderWithdrew(withdrawOrder);
     }
 
     @Override
-    public void handlePreparationInProgress(PreparationInProgressEvent event) {
+    public void handlePreparationStarted(PreparationStartedEvent event) {
         final Order order = findOrder(event.orderId());
-        order.setStatus(OrderStatus.PREPARING);
+        order.setStatus(OrderStatus.STARTED);
 
         final Order savedOrder = orderRepository.save(order);
-        log.info("Order with 'Preparing' status and with id {} successfully updated.", savedOrder.getId());
+        log.info("Order with 'Started' status and with id {} successfully updated.", savedOrder.getId());
 
-        final OrderDto.Prepare prepareOrder = OrderDto.Prepare.builder()
+        final OrderDto.Start startOrder = OrderDto.Start.builder()
                 .id(savedOrder.getId())
                 .customerId(savedOrder.getCustomerId())
                 .restaurantId(savedOrder.getRestaurantId())
                 .build();
-        orderEventPublisher.publishOrderPreparing(prepareOrder);
+        orderEventPublisher.publishOrderStarted(startOrder);
     }
 
     @Override
-    public void handlePreparationReady(PreparationReadyEvent event) {
+    public void handlePreparationCompleted(PreparationCompletedEvent event) {
         final Order order = findOrder(event.orderId());
-        order.setStatus(OrderStatus.READY_FOR_PICKUP);
+        order.setStatus(OrderStatus.PREPARED);
 
         final Order savedOrder = orderRepository.save(order);
-        log.info("Order with 'Ready for pick up' status and with id {} successfully updated.", savedOrder.getId());
+        log.info("Order with 'Prepared' status and with id {} successfully updated.", savedOrder.getId());
 
-        final OrderDto.Ready readyForPickUpOrder = OrderDto.Ready.builder()
+        final OrderDto.Prepare orderPrepare = OrderDto.Prepare.builder()
                 .id(savedOrder.getId())
                 .customerId(savedOrder.getCustomerId())
                 .restaurantId(savedOrder.getRestaurantId())
                 .build();
-        orderEventPublisher.publishOrderReadyForPickUp(readyForPickUpOrder);
+        orderEventPublisher.publishOrderPrepared(orderPrepare);
     }
 
     @Override
     public void handlePaymentFailed(PaymentFailedEvent event) {
-        final Optional<Order> order = orderRepository.findById(event.orderId());
-        if (order.isEmpty()) {
-            throw new EntityNotFoundException(String.format("Couldn't find order to cancel with id equal: %s", event.orderId()));
-        }
-        order.get().setStatus(OrderStatus.CANCELLED);
+        final Order order = findOrder(event.orderId());
+        order.setStatus(OrderStatus.CANCELLED);
 
-        final Order savedOrder = orderRepository.save(order.get());
+        final Order savedOrder = orderRepository.save(order);
         log.info("Order with 'Cancelled' status and with id {} successfully updated.", savedOrder.getId());
 
         final OrderDto.Cancel rejectedOrder = OrderDto.Cancel.builder()
@@ -155,6 +169,21 @@ public class DefaultOrderService implements OrderService {
                 .restaurantId(savedOrder.getRestaurantId())
                 .build();
         orderEventPublisher.publishOrderCancelled(rejectedOrder);
+    }
+
+    @Override
+    public void handleDeliverySent(DeliverySentEvent event) {
+        final Order order = findOrder(event.orderId());
+        order.setStatus(OrderStatus.SENT);
+
+        final Order savedOrder = orderRepository.save(order);
+        log.info("Order with 'Sent' status and with id {} successfully updated.", savedOrder.getId());
+
+        final OrderDto.Send rejectedOrder = OrderDto.Send.builder()
+                .id(savedOrder.getId())
+                .customerId(savedOrder.getCustomerId())
+                .build();
+        orderEventPublisher.publishOrderSent(rejectedOrder);
     }
 
     private BigDecimal getTotalAmount(List<OrderItemDto> items) {

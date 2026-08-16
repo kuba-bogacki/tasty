@@ -1,9 +1,7 @@
 package template.notification.subscriber;
 
 import common.events.delivery.DeliveryAssignedEvent;
-import common.events.order.OrderAcceptedEvent;
-import common.events.order.OrderCancelledEvent;
-import common.events.order.OrderReadyEvent;
+import common.events.order.*;
 import common.events.payment.PaymentRefundedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +28,21 @@ public class DefaultNotificationEventSubscriber implements NotificationEventSubs
     }
 
     @Override
-    public void subscribeOrderReady(OrderReadyEvent event) {
-        log.info("Event 'order ready for pick up' with id: {} successfully subscribed.", event.eventId());
-        notificationService.handleOrderReady(event);
+    public void subscribeOrderPrepared(OrderPreparedEvent event) {
+        log.info("Event 'order prepared' with id: {} successfully subscribed.", event.eventId());
+        notificationService.handleOrderPrepared(event);
+    }
+
+    @Override
+    public void subscribeOrderSent(OrderSentEvent event) {
+        log.info("Event 'order sent' with id: {} successfully subscribed.", event.eventId());
+        notificationService.handleOrderSent(event);
+    }
+
+    @Override
+    public void subscribeOrderDelivered(OrderDeliveredEvent event) {
+        log.info("Event 'order delivered' with id: {} successfully subscribed.", event.eventId());
+        notificationService.handleOrderDelivered(event);
     }
 
     @Override

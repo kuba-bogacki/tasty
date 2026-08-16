@@ -4,5 +4,6 @@ import template.courier.domain.dto.DeliveryDto;
 
 public interface CourierEventPublisher {
 
-    void publishDeliveryAssigned(DeliveryDto.Assigned assignedDelivery);
+    void publishDeliveryAssigned(DeliveryDto.Assign assignDelivery);
+    void publishDeliverySent(DeliveryDto.Send sendDelivery);
 }

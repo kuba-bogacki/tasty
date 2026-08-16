@@ -3,7 +3,6 @@ package template.restaurant.domain.dto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 public class OrderPreparationDto {
@@ -35,7 +34,7 @@ public class OrderPreparationDto {
     ) {}
 
     @Builder
-    public record Prepare(
+    public record Start(
 
             @NotBlank UUID orderId,
             @NotBlank UUID restaurantId
@@ -43,7 +42,7 @@ public class OrderPreparationDto {
     ) {}
 
     @Builder
-    public record Ready(
+    public record Complete(
 
             @NotBlank UUID orderId,
             @NotBlank UUID restaurantId

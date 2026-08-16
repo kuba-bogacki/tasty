@@ -2,7 +2,7 @@ package template.payment.service;
 
 import common.events.order.OrderCreatedEvent;
 import common.events.order.OrderRejectedEvent;
-import common.events.order.OrderWithdrawEvent;
+import common.events.order.OrderWithdrewEvent;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -91,7 +91,7 @@ public class DefaultPaymentService implements PaymentService {
     }
 
     @Override
-    public void handleOrderWithdraw(OrderWithdrawEvent event) {
+    public void handleOrderWithdrew(OrderWithdrewEvent event) {
         final Optional<Payment> completedPayment = paymentRepository.findByOrderIdAndRestaurantId(event.orderId(), event.restaurantId());
         if (completedPayment.isEmpty()) {
             throw new EntityNotFoundException(String.format("Couldn't find payment accessing order id equal: %s and restaurant id equal: %s", event.orderId(), event.restaurantId()));

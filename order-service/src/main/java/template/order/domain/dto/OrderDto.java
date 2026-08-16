@@ -72,6 +72,15 @@ public class OrderDto {
     ) {}
 
     @Builder
+    public record Start(
+
+            @NotBlank UUID id,
+            @NotBlank UUID customerId,
+            @NotBlank UUID restaurantId
+
+    ) {}
+
+    @Builder
     public record Prepare(
 
             @NotBlank UUID id,
@@ -81,11 +90,19 @@ public class OrderDto {
     ) {}
 
     @Builder
-    public record Ready(
+    public record Send(
 
             @NotBlank UUID id,
-            @NotBlank UUID customerId,
-            @NotBlank UUID restaurantId
+            @NotBlank UUID customerId
+
+    ) {}
+
+    @Builder
+    public record Deliver(
+
+            @NotBlank UUID id,
+            @NotBlank UUID restaurantId,
+            @NotBlank UUID courierId
 
     ) {}
 }

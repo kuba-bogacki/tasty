@@ -1,4 +1,4 @@
-package common.events.order;
+package common.events.preparation;
 
 import common.events.DomainEvent;
 import jakarta.validation.constraints.NotBlank;
@@ -8,7 +8,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Builder
-public record OrderWithdrawEvent(
+public record PreparationWithdrewEvent(
 
         @NotBlank UUID eventId,
         @NotBlank Instant occurredAt,

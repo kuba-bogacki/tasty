@@ -33,7 +33,7 @@ public class RestaurantDto {
     ) {}
 
     @Builder
-    public record Prepare(
+    public record Start(
 
             @NotBlank UUID orderId,
             @NotBlank UUID restaurantId

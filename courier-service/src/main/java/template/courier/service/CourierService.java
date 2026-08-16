@@ -7,6 +7,7 @@ import java.util.UUID;
 
 public interface CourierService {
 
+    void releaseCourier(UUID courierId);
     void createNewCourier(CourierDto.Create createDto);
     void assignCourierToDelivery(CourierDto.Assign assignDto);
     Optional<CourierDto.Find> findAvailableCourier();

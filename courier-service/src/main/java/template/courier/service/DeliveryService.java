@@ -1,12 +1,15 @@
 package template.courier.service;
 
-import common.events.order.OrderPreparingEvent;
+import common.events.order.OrderDeliveredEvent;
+import common.events.order.OrderStartedEvent;
+import template.courier.domain.dto.DeliveryDto;
 
 public interface DeliveryService {
 
     // Controller handlers
-
+    void sendDelivery(DeliveryDto.Send sendDto);
 
     // Event handlers
-    void handleOrderPreparing(OrderPreparingEvent event);
+    void handleOrderStarted(OrderStartedEvent event);
+    void handleOrderDelivered(OrderDeliveredEvent event);
 }

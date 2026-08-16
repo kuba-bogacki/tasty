@@ -1,16 +1,19 @@
-package common.events.delivery;
+package common.events.order;
 
 import common.events.DomainEvent;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 
 import java.time.Instant;
 import java.util.UUID;
 
-public record DeliveryPickedUpEvent(
+@Builder
+public record OrderWithdrewEvent(
 
         @NotBlank UUID eventId,
         @NotBlank Instant occurredAt,
         @NotBlank UUID orderId,
-        @NotBlank UUID courierId
+        @NotBlank UUID customerId,
+        @NotBlank UUID restaurantId
 
 ) implements DomainEvent {}

@@ -7,9 +7,9 @@ public enum PreparationStatus {
 
     ACCEPTED("Accepted"),
     REJECTED("Rejected"),
-    WITHDRAW("Withdraw"),
-    IN_PROGRESS("In progress"),
-    READY("Ready");
+    WITHDREW("Withdrew"),
+    STARTED("Started"),
+    COMPLETED("Completed");
 
     private final String description;
 }

@@ -33,15 +33,15 @@ public class RestaurantController {
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
-    @PatchMapping(value = "/prepare")
-    public ResponseEntity<?> startPreparation(@Valid @RequestBody RestaurantDto.Prepare prepareDto) {
-        restaurantService.startPreparation(prepareDto);
+    @PatchMapping(value = "/start")
+    public ResponseEntity<?> startPreparation(@Valid @RequestBody RestaurantDto.Start startDto) {
+        restaurantService.startPreparation(startDto);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
-    @PatchMapping(value = "/ready")
-    public ResponseEntity<?> finishPreparation(@Valid @RequestBody RestaurantDto.Ready readyDto) {
-        restaurantService.finishPreparation(readyDto);
+    @PatchMapping(value = "/complete")
+    public ResponseEntity<?> completePreparation(@Valid @RequestBody RestaurantDto.Ready readyDto) {
+        restaurantService.completePreparation(readyDto);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 }

@@ -1,9 +1,8 @@
 package template.notification.service;
 
 import common.events.delivery.DeliveryAssignedEvent;
-import common.events.order.OrderAcceptedEvent;
-import common.events.order.OrderCancelledEvent;
-import common.events.order.OrderReadyEvent;
+import common.events.delivery.DeliverySentEvent;
+import common.events.order.*;
 import common.events.payment.PaymentRefundedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +44,7 @@ public class DefaultNotificationService implements NotificationService {
                 .externalType(NotificationExternalType.CUSTOMER)
                 .type(NotificationType.PUSH)
                 .status(NotificationStatus.SENT)
-                .content("Order cancelled due to payment failure.")
+                .content("Order cancelled due to payment failure")
                 .createdAt(Instant.now())
                 .build();
 
@@ -54,18 +53,18 @@ public class DefaultNotificationService implements NotificationService {
     }
 
     @Override
-    public void handleOrderReady(OrderReadyEvent event) {
+    public void handleOrderPrepared(OrderPreparedEvent event) {
         final Notification notification = Notification.builder()
                 .externalId(event.customerId())
                 .externalType(NotificationExternalType.CUSTOMER)
                 .type(NotificationType.PUSH)
                 .status(NotificationStatus.SENT)
-                .content("Order ready for pick up.")
+                .content("Order successfully prepared")
                 .createdAt(Instant.now())
                 .build();
 
         final Notification savedNotification = notificationRepository.save(notification);
-        log.info("Order ready for pick up notification '{}' with id: {} successfully saved.", savedNotification.getContent(), savedNotification.getId());
+        log.info("Order prepared notification '{}' with id: {} successfully saved.", savedNotification.getContent(), savedNotification.getId());
     }
 
     @Override
@@ -80,7 +79,7 @@ public class DefaultNotificationService implements NotificationService {
                 .build();
 
         final Notification savedNotification = notificationRepository.save(notification);
-        log.info("Refund notification '{}' with id: {} successfully saved.", savedNotification.getContent(), savedNotification.getId());
+        log.info("Payment refunded notification '{}' with id: {} successfully saved.", savedNotification.getContent(), savedNotification.getId());
     }
 
     @Override
@@ -95,6 +94,36 @@ public class DefaultNotificationService implements NotificationService {
                 .build();
 
         final Notification savedNotification = notificationRepository.save(notification);
-        log.info("Assigned notification '{}' with id: {} successfully saved.", savedNotification.getContent(), savedNotification.getId());
+        log.info("Delivery assigned notification '{}' with id: {} successfully saved.", savedNotification.getContent(), savedNotification.getId());
+    }
+
+    @Override
+    public void handleOrderSent(OrderSentEvent event) {
+        final Notification notification = Notification.builder()
+                .externalId(event.customerId())
+                .externalType(NotificationExternalType.CUSTOMER)
+                .type(NotificationType.PUSH)
+                .status(NotificationStatus.SENT)
+                .content("Order successfully sent to customer")
+                .createdAt(Instant.now())
+                .build();
+
+        final Notification savedNotification = notificationRepository.save(notification);
+        log.info("Order sent notification '{}' with id: {} successfully saved.", savedNotification.getContent(), savedNotification.getId());
+    }
+
+    @Override
+    public void handleOrderDelivered(OrderDeliveredEvent event) {
+        final Notification notification = Notification.builder()
+                .externalId(event.restaurantId())
+                .externalType(NotificationExternalType.RESTAURANT)
+                .type(NotificationType.PUSH)
+                .status(NotificationStatus.SENT)
+                .content("Order successfully delivered to customer")
+                .createdAt(Instant.now())
+                .build();
+
+        final Notification savedNotification = notificationRepository.save(notification);
+        log.info("Order delivered notification '{}' with id: {} successfully saved.", savedNotification.getContent(), savedNotification.getId());
     }
 }

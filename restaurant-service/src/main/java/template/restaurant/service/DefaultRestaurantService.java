@@ -58,49 +58,49 @@ public class DefaultRestaurantService implements RestaurantService {
     @Override
     public void withdrawPreparation(RestaurantDto.Withdraw withdrawDto) {
         final OrderPreparation orderPreparation = findOrderPreparation(withdrawDto.orderId(), withdrawDto.restaurantId());
-        validatePreparationStatus(PreparationStatus.ACCEPTED, orderPreparation.getStatus(), "Withdraw preparation impossible due to forbidden preparation status: %s");
+        validatePreparationStatus(PreparationStatus.ACCEPTED, orderPreparation.getStatus(), "Withdrew preparation impossible due to forbidden preparation status: %s");
 
-        orderPreparation.setStatus(PreparationStatus.WITHDRAW);
+        orderPreparation.setStatus(PreparationStatus.WITHDREW);
         final OrderPreparation updatedOrderPreparation = orderPreparationRepository.save(orderPreparation);
-        log.info("Updated 'Withdraw' order preparation with id {} successfully saved.", updatedOrderPreparation.getId());
+        log.info("Updated 'Withdrew' order preparation with id {} successfully saved.", updatedOrderPreparation.getId());
 
         final OrderPreparationDto.Withdraw withdrawPreparation = OrderPreparationDto.Withdraw.builder()
                 .orderId(updatedOrderPreparation.getOrderId())
                 .restaurantId(updatedOrderPreparation.getRestaurantId())
                 .build();
-        restaurantEventPublisher.publishPreparationWithdraw(withdrawPreparation);
+        restaurantEventPublisher.publishPreparationWithdrew(withdrawPreparation);
     }
 
     @Override
-    public void startPreparation(RestaurantDto.Prepare prepareDto) {
-        final OrderPreparation orderPreparation = findOrderPreparation(prepareDto.orderId(), prepareDto.restaurantId());
-        validatePreparationStatus(PreparationStatus.ACCEPTED, orderPreparation.getStatus(), "Start preparation impossible due to forbidden preparation status: %s");
+    public void startPreparation(RestaurantDto.Start startDto) {
+        final OrderPreparation orderPreparation = findOrderPreparation(startDto.orderId(), startDto.restaurantId());
+        validatePreparationStatus(PreparationStatus.ACCEPTED, orderPreparation.getStatus(), "Started preparation impossible due to forbidden preparation status: %s");
 
-        orderPreparation.setStatus(PreparationStatus.IN_PROGRESS);
+        orderPreparation.setStatus(PreparationStatus.STARTED);
         final OrderPreparation updatedOrderPreparation = orderPreparationRepository.save(orderPreparation);
-        log.info("Updated 'In progress' order preparation with id {} successfully saved.", updatedOrderPreparation.getId());
+        log.info("Updated 'Started' order preparation with id {} successfully saved.", updatedOrderPreparation.getId());
 
-        final OrderPreparationDto.Prepare startPreparation = OrderPreparationDto.Prepare.builder()
+        final OrderPreparationDto.Start startPreparation = OrderPreparationDto.Start.builder()
                 .orderId(updatedOrderPreparation.getOrderId())
                 .restaurantId(updatedOrderPreparation.getRestaurantId())
                 .build();
-        restaurantEventPublisher.publishPreparationInProgress(startPreparation);
+        restaurantEventPublisher.publishPreparationStarted(startPreparation);
     }
 
     @Override
-    public void finishPreparation(RestaurantDto.Ready readyDto) {
+    public void completePreparation(RestaurantDto.Ready readyDto) {
         final OrderPreparation orderPreparation = findOrderPreparation(readyDto.orderId(), readyDto.restaurantId());
-        validatePreparationStatus(PreparationStatus.IN_PROGRESS, orderPreparation.getStatus(), "Ready preparation impossible due to forbidden preparation status: %s");
+        validatePreparationStatus(PreparationStatus.STARTED, orderPreparation.getStatus(), "Completed preparation impossible due to forbidden preparation status: %s");
 
-        orderPreparation.setStatus(PreparationStatus.READY);
+        orderPreparation.setStatus(PreparationStatus.COMPLETED);
         final OrderPreparation updatedOrderPreparation = orderPreparationRepository.save(orderPreparation);
-        log.info("Updated 'Ready' order preparation with id {} successfully saved.", updatedOrderPreparation.getId());
+        log.info("Updated 'Completed' order preparation with id {} successfully saved.", updatedOrderPreparation.getId());
 
-        final OrderPreparationDto.Ready readyPreparation = OrderPreparationDto.Ready.builder()
+        final OrderPreparationDto.Complete completePreparation = OrderPreparationDto.Complete.builder()
                 .orderId(updatedOrderPreparation.getOrderId())
                 .restaurantId(updatedOrderPreparation.getRestaurantId())
                 .build();
-        restaurantEventPublisher.publishPreparationReady(readyPreparation);
+        restaurantEventPublisher.publishPreparationCompleted(completePreparation);
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Builder
-public record PreparationReadyEvent(
+public record PreparationCompletedEvent(
 
         @NotBlank UUID eventId,
         @NotBlank Instant occurredAt,
